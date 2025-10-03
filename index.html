@@ -37,7 +37,7 @@
 	<text id="date" class="caption dateText" x="210" y="170" stroke-width="0" text-anchor="end" alignment-baseline="middle" filter="url(#shadow)"></text>
 </svg>
 <script>
-	var setCaptions; setCaptions = function() { var hour, now, minute; now = new Date(); hour = now.getHours(); minute = now.getMinutes(); return $('#time').text(moment().format('H:mm a')); };
+	var setCaptions; setCaptions = function() { var hour, now, minute; now = new Date(); hour = now.getHours(); minute = now.getMinutes(); return $('#time').text(moment().format('h:mm a')); };
 	$('#day').text(moment().format('dddd')); $('#date').text(moment().format('MMMM D'));
 	setCaptions(); setInterval(function() { return setCaptions(); }, 10 * 1000);
 </script>

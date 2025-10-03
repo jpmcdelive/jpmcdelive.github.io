@@ -9,22 +9,11 @@
     <script  src="https://code.jquery.com/jquery-3.7.1.slim.min.js" integrity="sha256-kmHvs0B+OpCW5GVHUNjv9rOmY0IvSIRcf7zGUDTDQM8=" crossorigin="anonymous"></script>
 	  <style>
       @import url(https://fonts.googleapis.com/css?family=Source+Sans+Pro:300,400,600,700,900|Dosis:300,400,600,700,800|Droid+Sans:400,700|Lato:300,400,700,900|PT+Sans:400,700|Ubuntu:300,400,500,700|Open+Sans:400,300,600,700|Roboto:400,300,500,700,900|Roboto+Condensed:400,300,700|Open+Sans+Condensed:300,700|Play:400,700|Maven+Pro:400,500,700,900&subset=latin,latin-ext);
-        body {
-          padding: 0;
-          margin: 0;
-          background-color: #222;
-          overflow: hidden;
-        }
-        
-        svg {
-          position: absolute;
-          width: 240px;
-          height: 200px;
-          left: 0;
-          right: 0;
-          top: 0;
-          bottom: 0;
-          margin: 0;
+        body { padding: 0; margin: 0; background-color: #222; overflow: hidden; }
+        svg { position: absolute; width: 240px;
+          height: 200px; left: 0;
+          right: 0; top: 0;
+          bottom: 0; margin: 0;
           background-image: url('data:image/svg+xml;base64,PD94bWwgdmVyc2lvbj0iMS4wIiBlbmNvZGluZz0idXRmLTgiPz4gPHN2ZyB2ZXJzaW9uPSIxLjEiIHhtbG5zPSJodHRwOi8vd3d3LnczLm9yZy8yMDAwL3N2ZyI+PGRlZnM+PGxpbmVhckdyYWRpZW50IGlkPSJncmFkIiBncmFkaWVudFVuaXRzPSJvYmplY3RCb3VuZGluZ0JveCIgeDE9IjAuNSIgeTE9IjAuMCIgeDI9IjAuNSIgeTI9IjEuMCI+PHN0b3Agb2Zmc2V0PSI2MCUiIHN0b3AtY29sb3I9IiMwMDAwMDAiLz48c3RvcCBvZmZzZXQ9IjEwMCUiIHN0b3AtY29sb3I9IiMyMTU3NjkiLz48L2xpbmVhckdyYWRpZW50PjwvZGVmcz48cmVjdCB4PSIwIiB5PSIwIiB3aWR0aD0iMTAwJSIgaGVpZ2h0PSIxMDAlIiBmaWxsPSJ1cmwoI2dyYWQpIiAvPjwvc3ZnPiA=');
           background-size: 100%;
           background-image: -webkit-gradient(linear, 50% 0%, 50% 100%, color-stop(60%, #000000), color-stop(100%, #215769));
@@ -35,127 +24,22 @@
           -webkit-box-shadow: 0 0 50px rgba(0, 0, 0, 0.8);
           box-shadow: 0 0 50px rgba(0, 0, 0, 0.8);
         }
-        
-        .caption {
-          font-family: "Source Sans Pro";
-          font-weight: 300;
-          fill: White;
-        }
-        
-        .dayText {
-          font-size: 1.7rem;
-        }
-        
-        .dateText {
-          font-size: 2.5rem;
-          font-weight: 400;
-        }
-        
-        .timeText {
-          font-family: "Open Sans";
-          font-size: 5rem;
-          font-weight: 600;
-          fill: White;
-        }
+        .caption { font-family: "Source Sans Pro"; font-weight: 300; fill: White; }
+        .dayText { font-size: 1.7rem; }
+        .dateText { font-size: 2.5rem; font-weight: 400; }
+        .timeText { font-family: "Open Sans"; font-size: 5rem; font-weight: 600; fill: White; }
 </style>
 </head>
 <body>
 <svg>
-	
 	<text id="time" class="caption timeText" x="120" y="70" stroke-width="0" text-anchor="middle" alignment-baseline="middle" filter="url(#shadow)"></text>
 	<text id="day" class="caption dayText" x="210" y="130" stroke-width="0" text-anchor="end" alignment-baseline="middle" filter="url(#shadow)"></text>
 	<text id="date" class="caption dateText" x="210" y="170" stroke-width="0" text-anchor="end" alignment-baseline="middle" filter="url(#shadow)"></text>
-
-
 </svg>
 <script>
-/*
-Inspired by https://dribbble.com/shots/2004657-Alarm-Clock-concept
- */
-var describeArc, polarToCartesian, setCaptions;
-
-polarToCartesian = function(centerX, centerY, radius, angleInDegrees) {
-  var angleInRadians;
-  angleInRadians = (angleInDegrees - 90) * Math.PI / 180.0;
-  return {
-    x: centerX + radius * Math.cos(angleInRadians),
-    y: centerY + radius * Math.sin(angleInRadians)
-  };
-};
-
-describeArc = function(x, y, radius, startAngle, endAngle) {
-  var arcSweep, end, start;
-  start = polarToCartesian(x, y, radius, endAngle);
-  end = polarToCartesian(x, y, radius, startAngle);
-  arcSweep = endAngle - startAngle <= 180 ? '0' : '1';
-  return ['M', start.x, start.y, 'A', radius, radius, 0, arcSweep, 0, end.x, end.y].join(' ');
-};
-
-setCaptions = function() {
-  var dot, hour, hourArc, minArc, minute, now, pos;
-  now = new Date();
-  hour = now.getHours() % 12;
-  minute = now.getMinutes();
-  hourArc = (hour * 60 + minute) / (12 * 60) * 360;
-  minArc = minute / 60 * 360;
-  $('.clockArc.hour').attr('d', describeArc(500, 240, 150, 0, hourArc));
-  $('.clockArc.minute').attr('d', describeArc(500, 240, 170, 0, minArc));
-  $('.clockDot.hour').attr('d', describeArc(500, 240, 150, hourArc - 3, hourArc));
-  $('.clockDot.minute').attr('d', describeArc(500, 240, 170, minArc - 1, minArc));
-  dot = $(".clockDot.hour");
-  pos = polarToCartesian(500, 240, 150, hourArc);
-  dot.attr("cx", pos.x);
-  dot.attr("cy", pos.y);
-  dot = $(".clockDot.minute");
-  pos = polarToCartesian(500, 240, 170, minArc);
-  dot.attr("cx", pos.x);
-  dot.attr("cy", pos.y);
-  return $('#time').text(moment().format('H:mm'));
-};
-
-$('#day').text(moment().format('dddd'));
-
-$('#date').text(moment().format('MMMM D'));
-
-setCaptions();
-
-setInterval(function() {
-  return setCaptions();
-}, 10 * 1000);
-
-$(function() {
-  TweenMax.staggerFrom(".clockArc", .5, {
-    drawSVG: 0,
-    ease: Power3.easeOut
-  }, 0.3);
-  TweenMax.from("#time", 1.0, {
-    attr: {
-      y: 350
-    },
-    opacity: 0,
-    ease: Power3.easeOut,
-    delay: 0.5
-  });
-  TweenMax.from(".dayText", 1.0, {
-    attr: {
-      y: 310
-    },
-    opacity: 0,
-    delay: 1.0,
-    ease: Power3.easeOut
-  });
-  return TweenMax.from(".dateText", 1.0, {
-    attr: {
-      y: 350
-    },
-    opacity: 0,
-    delay: 1.5,
-    ease: Power3.easeOut
-  });
-});
-
-// ---
-// generated by coffee-script 1.9.2
+	var setCaptions; setCaptions = function() { var hour, now, minute; now = new Date(); hour = now.getHours(); minute = now.getMinutes(); return $('#time').text(moment().format('H:mm a')); };
+	$('#day').text(moment().format('dddd')); $('#date').text(moment().format('MMMM D'));
+	setCaptions(); setInterval(function() { return setCaptions(); }, 10 * 1000); });
 </script>
 </body>
 </html>

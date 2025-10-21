@@ -31,12 +31,18 @@
 </style>
 </head>
 <body>
+
+<!-- Elfsight RSS Feed | New York Times -->
+<script src="https://elfsightcdn.com/platform.js" async></script>
+	
 <svg>
 	<text id="time" class="caption timeText" x="120" y="150" stroke-width="0" text-anchor="middle" alignment-baseline="middle" filter="url(#shadow)"></text>
 	<text id="day" class="caption dayText" x="210" y="30" stroke-width="0" text-anchor="end" alignment-baseline="middle" filter="url(#shadow)"></text>
 	<text id="date" class="caption dateText" x="210" y="70" stroke-width="0" text-anchor="end" alignment-baseline="middle" filter="url(#shadow)"></text>
 </svg>
-<script>
+
+<div class="elfsight-app-671eed31-4097-4076-ace6-df3063026600" data-elfsight-app-lazy></div>
+	<script>
 	var setCaptions; setCaptions = function() { var hour, now, minute; now = new Date(); hour = now.getHours(); minute = now.getMinutes(); return $('#time').text(moment().format('h:mm a')); };
 	$('#day').text(moment().format('dddd')); $('#date').text(moment().format('MMMM D'));
 	setCaptions(); setInterval(function() { return setCaptions(); }, 10 * 1000);

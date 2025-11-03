@@ -5,18 +5,19 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>NYT News Carousel Widget</title>
     <style>
-        /* Basic CSS for the widget */
+        /* CSS is updated to accommodate the image and description */
         .news-widget {
             border: 1px solid #ddd;
-            width: 300px;
+            width: 400px; /* Increased width for better display */
             margin: 20px auto;
             overflow: hidden;
-            background-color: #f7f7f7;
-            box-shadow: 2px 2px 5px rgba(0,0,0,0.1);
-            font-family: Arial, sans-serif;
+            background-color: #fff;
+            box-shadow: 2px 2px 10px rgba(0,0,0,0.1);
+            font-family: 'Georgia', serif; /* A more "newspaper" font */
+            color: #333;
         }
         .carousel-container {
-            height: 60px; /* Space for one headline */
+            height: 250px; /* Increased height for content */
             position: relative;
         }
         .carousel-item {
@@ -25,35 +26,54 @@
             left: 0;
             width: 100%;
             height: 100%;
-            display: flex;
-            align-items: center;
             opacity: 0;
-            transition: opacity 0.5s ease-in-out; /* Smooth transition for the carousel effect */
-            padding: 0 10px;
+            transition: opacity 0.7s ease-in-out;
+            padding: 10px;
+            box-sizing: border-box;
+            background-color: white;
+            display: flex;
+            flex-direction: column;
+            justify-content: space-between;
         }
         .carousel-item.active {
             opacity: 1;
         }
-        .carousel-item a {
-            font-size: 14px;
-            font-weight: bold;
-            color: #333;
-            text-decoration: none;
-            overflow: hidden;
-            white-space: nowrap;
-            text-overflow: ellipsis; /* For long headlines */
-            max-width: 100%;
-            display: block;
+        .item-image {
+            width: 100%;
+            height: 120px;
+            object-fit: cover;
+            margin-bottom: 8px;
+            border-radius: 2px;
         }
-        .carousel-item a:hover {
-            color: #000;
+        .item-title a {
+            font-size: 16px;
+            font-weight: bold;
+            color: #1a1a1a;
+            text-decoration: none;
+            display: block;
+            margin-bottom: 4px;
+            line-height: 1.3;
+        }
+        .item-title a:hover {
+            color: #05668d;
             text-decoration: underline;
         }
+        .item-description {
+            font-size: 13px;
+            color: #666;
+            margin-top: 4px;
+            /* Restrict description to 2 lines */
+            display: -webkit-box;
+            -webkit-line-clamp: 2;
+            -webkit-box-orient: vertical;
+            overflow: hidden;
+        }
         .widget-header {
-            background-color: #333;
+            background-color: #000;
             color: white;
             padding: 5px 10px;
-            font-size: 12px;
+            font-size: 14px;
+            font-weight: bold;
             text-align: center;
         }
     </style>
@@ -73,27 +93,54 @@
             let currentItemIndex = 0;
             let headlines = [];
 
-            // A public CORS proxy is needed to bypass browser security restrictions for fetching external RSS/XML.
-            // **NOTE:** For a production environment, you must use your own server-side proxy!
+            // Still using the CORS proxy for client-side functionality
             const PROXY_URL = 'https://api.allorigins.win/get?url=';
             const NYT_RSS_FEED = 'https://rss.nytimes.com/services/xml/rss/nyt/HomePage.xml';
             const FINAL_URL = PROXY_URL + encodeURIComponent(NYT_RSS_FEED);
+
+            // A helper function to safely extract text content
+            function getElementText(el, selector) {
+                const element = el.querySelector(selector);
+                return element ? element.textContent.trim() : 'No Title/Link';
+            }
+
+            // A function to extract the image URL, which is often nested in a 'media:content' tag
+            function getImageUrl(el) {
+                // NYT feeds often use the Yahoo Media RSS extension (mrss) with a "media:content" tag.
+                // We need to query for the attribute `url` within that tag.
+                const mediaContent = el.querySelector('content[medium="image"]');
+                if (mediaContent) {
+                    return mediaContent.getAttribute('url');
+                }
+                
+                // Fallback: Sometimes the image is in a <media:thumbnail> tag
+                const thumbnail = el.querySelector('thumbnail');
+                 if (thumbnail) {
+                    return thumbnail.getAttribute('url');
+                }
+                
+                return 'https://via.placeholder.com/400x120?text=Image+Not+Available';
+            }
 
             async function fetchHeadlines() {
                 try {
                     const response = await fetch(FINAL_URL);
                     const data = await response.json();
                     
-                    // The proxy returns the feed content as a string, which we must parse.
                     const parser = new DOMParser();
+                    // NOTE: NYT RSS XML often includes namespaces (like `xmlns:media`) which need to be handled, 
+                    // or in this case, we rely on the parser to find the tag regardless of namespace prefix.
                     const xmlDoc = parser.parseFromString(data.contents, "text/xml");
                     
-                    // Select the first few news items
-                    const items = Array.from(xmlDoc.querySelectorAll('item')).slice(0, 10);
+                    // Select items, skipping the first element which is often the feed's meta-data.
+                    const items = Array.from(xmlDoc.querySelectorAll('item')).slice(0, 8);
                     
                     headlines = items.map(item => ({
-                        title: item.querySelector('title').textContent,
-                        link: item.querySelector('link').textContent
+                        title: getElementText(item, 'title'),
+                        link: getElementText(item, 'link'),
+                        // The <description> is usually the article's summary.
+                        description: getElementText(item, 'description'),
+                        image: getImageUrl(item)
                     }));
 
                     if (headlines.length > 0) {
@@ -104,7 +151,7 @@
                     }
                 } catch (error) {
                     console.error('Error fetching NYT feed:', error);
-                    container.innerHTML = '<p style="text-align: center; padding: 10px;">Error loading news. (CORS issue likely)</p>';
+                    container.innerHTML = '<p style="text-align: center; padding: 10px;">Error loading news. (CORS or XML issue)</p>';
                 }
             }
 
@@ -115,12 +162,14 @@
                     itemDiv.className = 'carousel-item';
                     itemDiv.id = `item-${index}`;
                     
-                    const anchor = document.createElement('a');
-                    anchor.href = headline.link;
-                    anchor.textContent = headline.title;
-                    anchor.target = '_blank'; // Open link in new tab
+                    itemDiv.innerHTML = `
+                        <img src="${headline.image}" alt="${headline.title}" class="item-image">
+                        <div class="item-content">
+                            <h3 class="item-title"><a href="${headline.link}" target="_blank">${headline.title}</a></h3>
+                            <p class="item-description">${headline.description}</p>
+                        </div>
+                    `;
                     
-                    itemDiv.appendChild(anchor);
                     container.appendChild(itemDiv);
                 });
                 // Activate the first item
@@ -129,17 +178,17 @@
 
             function showNextItem() {
                 const currentItem = document.getElementById(`item-${currentItemIndex}`);
-                currentItem.classList.remove('active');
+                if (currentItem) currentItem.classList.remove('active');
 
                 currentItemIndex = (currentItemIndex + 1) % headlines.length;
 
                 const nextItem = document.getElementById(`item-${currentItemIndex}`);
-                nextItem.classList.add('active');
+                if (nextItem) nextItem.classList.add('active');
             }
 
             function startCarousel() {
-                // Change headline every 5 seconds (5000 milliseconds)
-                setInterval(showNextItem, 5000); 
+                // Change headline every 6 seconds
+                setInterval(showNextItem, 6000); 
             }
 
             fetchHeadlines();

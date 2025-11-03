@@ -1,0 +1,149 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>NYT News Carousel Widget</title>
+    <style>
+        /* Basic CSS for the widget */
+        .news-widget {
+            border: 1px solid #ddd;
+            width: 300px;
+            margin: 20px auto;
+            overflow: hidden;
+            background-color: #f7f7f7;
+            box-shadow: 2px 2px 5px rgba(0,0,0,0.1);
+            font-family: Arial, sans-serif;
+        }
+        .carousel-container {
+            height: 60px; /* Space for one headline */
+            position: relative;
+        }
+        .carousel-item {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            display: flex;
+            align-items: center;
+            opacity: 0;
+            transition: opacity 0.5s ease-in-out;
+            padding: 0 10px;
+        }
+        .carousel-item.active {
+            opacity: 1;
+        }
+        .carousel-item a {
+            font-size: 14px;
+            font-weight: bold;
+            color: #333;
+            text-decoration: none;
+            overflow: hidden;
+            white-space: nowrap;
+            text-overflow: ellipsis; /* For long headlines */
+            max-width: 100%;
+            display: block;
+        }
+        .carousel-item a:hover {
+            color: #000;
+            text-decoration: underline;
+        }
+        .widget-header {
+            background-color: #333;
+            color: white;
+            padding: 5px 10px;
+            font-size: 12px;
+            text-align: center;
+        }
+    </style>
+</head>
+<body>
+
+    <div id="nyt-news-carousel" class="news-widget">
+        <div class="widget-header">The New York Times Headlines</div>
+        <div class="carousel-container">
+            <p style="text-align: center; padding-top: 20px;">Loading news...</p>
+        </div>
+    </div>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', () => {
+            const container = document.querySelector('.carousel-container');
+            let currentItemIndex = 0;
+            let headlines = [];
+
+            // A public CORS proxy is needed to bypass browser security restrictions for fetching external RSS/XML.
+            // In a production environment, you should use your own server-side proxy.
+            const PROXY_URL = 'https://api.allorigins.win/get?url=';
+            const NYT_RSS_FEED = 'https://rss.nytimes.com/services/xml/rss/nyt/HomePage.xml';
+            const FINAL_URL = PROXY_URL + encodeURIComponent(NYT_RSS_FEED);
+
+            async function fetchHeadlines() {
+                try {
+                    const response = await fetch(FINAL_URL);
+                    const data = await response.json();
+                    
+                    // The proxy returns the feed content as a string, which we must parse.
+                    const parser = new DOMParser();
+                    const xmlDoc = parser.parseFromString(data.contents, "text/xml");
+                    
+                    // Select the first 5-10 news items (skipping the first <item>, often an ad/intro)
+                    const items = Array.from(xmlDoc.querySelectorAll('item')).slice(1, 10);
+                    
+                    headlines = items.map(item => ({
+                        title: item.querySelector('title').textContent,
+                        link: item.querySelector('link').textContent
+                    }));
+
+                    if (headlines.length > 0) {
+                        renderCarousel();
+                        startCarousel();
+                    } else {
+                        container.innerHTML = '<p style="text-align: center; padding-top: 20px;">No headlines found. Check the feed URL.</p>';
+                    }
+                } catch (error) {
+                    console.error('Error fetching NYT feed:', error);
+                    container.innerHTML = '<p style="text-align: center; padding: 10px;">Error loading news. (CORS issue likely)</p>';
+                }
+            }
+
+            function renderCarousel() {
+                container.innerHTML = ''; // Clear "Loading..."
+                headlines.forEach((headline, index) => {
+                    const itemDiv = document.createElement('div');
+                    itemDiv.className = 'carousel-item';
+                    itemDiv.id = `item-${index}`;
+                    
+                    const anchor = document.createElement('a');
+                    anchor.href = headline.link;
+                    anchor.textContent = headline.title;
+                    anchor.target = '_blank'; // Open link in new tab
+                    
+                    itemDiv.appendChild(anchor);
+                    container.appendChild(itemDiv);
+                });
+                // Activate the first item
+                document.getElementById('item-0').classList.add('active');
+            }
+
+            function showNextItem() {
+                const currentItem = document.getElementById(`item-${currentItemIndex}`);
+                currentItem.classList.remove('active');
+
+                currentItemIndex = (currentItemIndex + 1) % headlines.length;
+
+                const nextItem = document.getElementById(`item-${currentItemIndex}`);
+                nextItem.classList.add('active');
+            }
+
+            function startCarousel() {
+                // Change headline every 5 seconds (5000 milliseconds)
+                setInterval(showNextItem, 5000); 
+            }
+
+            fetchHeadlines();
+        });
+    </script>
+</body>
+</html>

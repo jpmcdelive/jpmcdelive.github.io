@@ -1,0 +1,185 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Weather Widget</title>
+    
+    <style>
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+            /* Added a light background to see the widget */
+            background-color: #f0f0f0; 
+            display: grid;
+            place-items: center;
+            min-height: 100vh;
+        }
+
+        .weather-widget {
+            background: #6c757d; /* Grey background from your image */
+            color: white;
+            padding: 20px;
+            border-radius: 12px;
+            width: 250px;
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+        }
+
+        .current-weather {
+            display: flex;
+            justify-content: space-between;
+            align-items: flex-start;
+            margin-bottom: 15px;
+        }
+
+        .current-temp {
+            font-size: 3.5rem; /* 56px */
+            font-weight: 600;
+            line-height: 1;
+        }
+
+        .current-conditions {
+            text-align: right;
+        }
+
+        .current-icon {
+            width: 60px;
+            height: 60px;
+        }
+
+        .current-description {
+            font-size: 0.9rem;
+            margin-top: -5px;
+            text-transform: capitalize;
+        }
+
+        .forecast {
+            display: flex;
+            justify-content: space-between;
+            padding: 0 10px;
+        }
+
+        .forecast-item {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            font-size: 0.9rem;
+        }
+        
+        .forecast-time {
+            font-weight: 500;
+            margin-bottom: 5px;
+        }
+
+        .forecast-icon {
+            width: 40px;
+            height: 40px;
+        }
+
+        .forecast-temp {
+            font-size: 1.1rem;
+            font-weight: 500;
+            margin-top: 5px;
+        }
+    </style>
+</head>
+<body>
+
+    <div class="weather-widget">
+        
+        <div class="current-weather">
+            <div class="current-temp" id="current-temp">--°</div>
+            <div class="current-conditions">
+                <img src="" alt="Weather icon" class="current-icon" id="current-icon">
+                <div class="current-description" id="current-description">Loading...</div>
+            </div>
+        </div>
+        
+        <div class="forecast">
+            <div class="forecast-item">
+                <div class="forecast-time">01:00 PM</div>
+                <img src="" alt="Icon" class="forecast-icon" id="forecast-icon-1">
+                <div class="forecast-temp" id="forecast-temp-1">--°</div>
+            </div>
+            <div class="forecast-item">
+                <div class="forecast-time">04:00 PM</div>
+                <img src="" alt="Icon" class="forecast-icon" id="forecast-icon-2">
+                <div class="forecast-temp" id="forecast-temp-2">--°</div>
+            </div>
+        </div>
+
+    </div>
+
+    <script>
+        // ------------------------------------------------------------------
+        // --- CONFIGURATION: CHANGE THESE VALUES ---
+        // ------------------------------------------------------------------
+
+        // 1. Get your free API key from https://openweathermap.org/appid
+        const apiKey = 'cc89b86463a5016e19b544c61d9a9117'; 
+
+        // 2. Set your city
+        const city = 'New York'; 
+
+        // ------------------------------------------------------------------
+
+        // Function to fetch and display weather
+        async function fetchWeather() {
+            // We use the '5 day / 3 hour forecast' to get hourly data
+            const apiUrl = `https://api.openweathermap.org/data/2.5/forecast?q=${city}&appid=${apiKey}&units=imperial`; // Use 'metric' for Celsius
+
+            try {
+                const response = await fetch(apiUrl);
+                if (!response.ok) {
+                    throw new Error(`HTTP error! status: ${response.status}`);
+                }
+                const data = await response.json();
+
+                // --- 1. Update Current Weather ---
+                // We'll use the first item in the forecast list as the "current" weather
+                const current = data.list[0];
+                document.getElementById('current-temp').textContent = `${Math.round(current.main.temp)}°`;
+                document.getElementById('current-description').textContent = current.weather[0].description;
+                document.getElementById('current-icon').src = `https://openweathermap.org/img/wn/${current.weather[0].icon}@2x.png`;
+
+                // --- 2. Update Hourly Forecast ---
+                
+                // Find the forecast for 1:00 PM (13:00)
+                const forecast1PM = data.list.find(item => {
+                    const forecastTime = new Date(item.dt * 1000);
+                    return forecastTime.getHours() === 13;
+                });
+
+                // Find the forecast for 4:00 PM (16:00)
+                const forecast4PM = data.list.find(item => {
+                    const forecastTime = new Date(item.dt * 1000);
+                    return forecastTime.getHours() === 16;
+                });
+
+                // Update the 1:00 PM forecast block
+                if (forecast1PM) {
+                    document.getElementById('forecast-temp-1').textContent = `${Math.round(forecast1PM.main.temp)}°`;
+                    document.getElementById('forecast-icon-1').src = `https://openweathermap.org/img/wn/${forecast1PM.weather[0].icon}@2x.png`;
+                } else {
+                    document.getElementById('forecast-temp-1').textContent = 'N/A';
+                }
+
+                // Update the 4:00 PM forecast block
+                if (forecast4PM) {
+                    document.getElementById('forecast-temp-2').textContent = `${Math.round(forecast4PM.main.temp)}°`;
+                    document.getElementById('forecast-icon-2').src = `https://openweathermap.org/img/wn/${forecast4PM.weather[0].icon}@2x.png`;
+                } else {
+                    document.getElementById('forecast-temp-2').textContent = 'N/A';
+                }
+
+            } catch (error) {
+                console.error('Error fetching weather data:', error);
+                document.getElementById('current-description').textContent = 'Error';
+            }
+        }
+
+        // Run the function when the page loads
+        document.addEventListener('DOMContentLoaded', fetchWeather);
+    </script>
+
+</body>
+</html>

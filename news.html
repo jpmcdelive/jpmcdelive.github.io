@@ -137,14 +137,7 @@
                         image: getImageUrl(item)
                     }));
                     
-                new QRCode(document.getElementById("qrcode"), {
-                    text: getElementText(item, 'link'),
-                    width: 128,
-                    height: 128,
-                    colorDark : "#000000",
-                    colorLight : "#ffffff",
-                    correctLevel : QRCode.CorrectLevel.H
-                });
+
 
                     if (headlines.length > 0) {
                         renderCarousel();
@@ -175,6 +168,15 @@
                     `;
                     
                     container.appendChild(itemDiv);
+                    
+                new QRCode(document.getElementById("qrcode"), {
+                    text: getElementText(item, ${headline.link}),
+                    width: 128,
+                    height: 128,
+                    colorDark : "#000000",
+                    colorLight : "#ffffff",
+                    correctLevel : QRCode.CorrectLevel.H
+                });
                 });
                 // Activate the first item
                 document.getElementById('item-0').classList.add('active');

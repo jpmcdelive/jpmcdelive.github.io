@@ -28,7 +28,7 @@
             display: flex;
             align-items: center;
             opacity: 0;
-            transition: opacity 0.5s ease-in-out;
+            transition: opacity 0.5s ease-in-out; /* Smooth transition for the carousel effect */
             padding: 0 10px;
         }
         .carousel-item.active {
@@ -74,7 +74,7 @@
             let headlines = [];
 
             // A public CORS proxy is needed to bypass browser security restrictions for fetching external RSS/XML.
-            // In a production environment, you should use your own server-side proxy.
+            // **NOTE:** For a production environment, you must use your own server-side proxy!
             const PROXY_URL = 'https://api.allorigins.win/get?url=';
             const NYT_RSS_FEED = 'https://rss.nytimes.com/services/xml/rss/nyt/HomePage.xml';
             const FINAL_URL = PROXY_URL + encodeURIComponent(NYT_RSS_FEED);
@@ -88,8 +88,8 @@
                     const parser = new DOMParser();
                     const xmlDoc = parser.parseFromString(data.contents, "text/xml");
                     
-                    // Select the first 5-10 news items (skipping the first <item>, often an ad/intro)
-                    const items = Array.from(xmlDoc.querySelectorAll('item')).slice(1, 10);
+                    // Select the first few news items
+                    const items = Array.from(xmlDoc.querySelectorAll('item')).slice(0, 10);
                     
                     headlines = items.map(item => ({
                         title: item.querySelector('title').textContent,

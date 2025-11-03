@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>NYT News Widget</title>
+    <title>NYT News Carousel</title>
 
     <script src="https://cdn.jsdelivr.net/npm/qrcodejs@1.0.0/qrcode.min.js"></script>
 
@@ -37,28 +37,23 @@
             font-size: 20px;
         }
 
-        #widget-content {
-            padding: 10px;
-            max-height: 80vh;
-            overflow-y: auto;
+        /* This container holds the single, changing article */
+        #carousel-content {
+            padding: 20px;
+            /* Set a consistent height */
+            min-height: 250px;
         }
-
+        
+        /* Styles for the article card itself */
         .article-card {
             display: flex;
             gap: 15px;
-            padding: 15px;
-            border-bottom: 1px solid #eee;
-            opacity: 0; /* For fade-in effect */
-            animation: fadeIn 0.5s ease-out forwards;
-        }
-
-        .article-card:last-child {
-            border-bottom: none;
+            animation: fadeIn 0.4s ease-out;
         }
 
         .article-image {
-            width: 100px;
-            height: 100px;
+            width: 120px;
+            height: 120px;
             object-fit: cover;
             border-radius: 6px;
             flex-shrink: 0;
@@ -66,11 +61,12 @@
 
         .article-content {
             flex-grow: 1;
+            min-width: 0; /* Fix for flexbox overflow */
         }
 
         .article-content h3 {
             margin: 0 0 5px 0;
-            font-size: 16px;
+            font-size: 18px;
         }
 
         .article-content a {
@@ -83,30 +79,63 @@
         }
 
         .article-content p {
-            margin: 0;
+            margin: 0 0 15px 0;
             font-size: 14px;
             color: #555;
-            /* Clamp description to 3 lines */
             display: -webkit-box;
-            -webkit-line-clamp: 3;
+            -webkit-line-clamp: 4;
             -webkit-box-orient: vertical;
             overflow: hidden;
         }
 
+        /* QR Code is now part of the main content */
         .article-qrcode {
-            width: 80px;
-            height: 80px;
+            width: 90px;
+            height: 90px;
             flex-shrink: 0;
-            display: flex;
-            align-items: center;
-            justify-content: center;
         }
         
         .article-qrcode canvas,
         .article-qrcode img {
-            padding: 4px; /* Give it a little border */
+            padding: 4px;
             background: #fff;
             box-shadow: 0 1px 3px rgba(0,0,0,0.1);
+        }
+
+        /* Navigation styles */
+        #carousel-nav {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 10px 20px;
+            border-top: 1px solid #eee;
+            background-color: #fafafa;
+        }
+
+        #carousel-nav button {
+            background-color: #007aff;
+            color: white;
+            border: none;
+            padding: 8px 14px;
+            border-radius: 5px;
+            font-size: 14px;
+            font-weight: 500;
+            cursor: pointer;
+        }
+        
+        #carousel-nav button:hover {
+            background-color: #0056b3;
+        }
+        
+        #carousel-nav button:disabled {
+            background-color: #ccc;
+            cursor: not-allowed;
+        }
+
+        #slide-indicator {
+            font-size: 14px;
+            color: #555;
+            font-weight: 500;
         }
 
         .loading, .error {
@@ -117,7 +146,7 @@
         }
         
         @keyframes fadeIn {
-            from { opacity: 0; transform: translateY(10px); }
+            from { opacity: 0; transform: translateY(5px); }
             to { opacity: 1; transform: translateY(0); }
         }
     </style>
@@ -128,103 +157,127 @@
         <header>
             <h2>New York Times Headlines</h2>
         </header>
-        <div id="widget-content">
+        
+        <div id="carousel-content">
             <div id="loading-message" class="loading">
                 Loading news...
             </div>
             </div>
+        
+        <div id="carousel-nav" style="display: none;">
+            <button id="prev-btn">&larr; Previous</button>
+            <span id="slide-indicator"></span>
+            <button id="next-btn">Next &rarr;</button>
+        </div>
     </div>
 
     <script>
         // --- CONFIGURATION ---
         // ⚠️ PASTE YOUR NYT API KEY HERE
         const NYT_API_KEY = "fA2AACnKOZWVnU8C0kcCLkivelqlxDQc";
-
-        // You can change "home" to other sections like "world", "science", "technology", etc.
         const NYT_SECTION = "home"; 
-        const ARTICLE_COUNT = 7; // Number of articles to display
+        const ARTICLE_COUNT = 7;
         // --- END CONFIGURATION ---
 
-        const apiUrl = `https://api.nytimes.com/svc/topstories/v2/${NYT_SECTION}.json?api-key=${NYT_API_KEY}`;
-        const widgetContent = document.getElementById('widget-content');
-        const loadingMessage = document.getElementById('loading-message');
+        // Global variables
+        let articlesData = [];
+        let currentIndex = 0;
 
+        // DOM Elements
+        const carouselContent = document.getElementById('carousel-content');
+        const loadingMessage = document.getElementById('loading-message');
+        const navContainer = document.getElementById('carousel-nav');
+        const prevBtn = document.getElementById('prev-btn');
+        const nextBtn = document.getElementById('next-btn');
+        const slideIndicator = document.getElementById('slide-indicator');
+
+        const apiUrl = `https://api.nytimes.com/svc/topstories/v2/${NYT_SECTION}.json?api-key=${NYT_API_KEY}`;
+
+        // --- FUNCTIONS ---
+
+        /**
+         * Renders a single article card into the carousel content area.
+         * @param {number} index - The index of the article to render from articlesData.
+         */
+        function renderArticle(index) {
+            if (articlesData.length === 0) return;
+
+            const article = articlesData[index];
+            
+            // 1. Find a valid image
+            let imageUrl = "";
+            let imageAlt = "Article image";
+            if (article.multimedia && article.multimedia.length > 0) {
+                const image = article.multimedia[2] || article.multimedia[0];
+                imageUrl = image.url;
+                imageAlt = image.caption || article.title;
+            }
+
+            // 2. Define the unique ID for the QR code container
+            // This ID can be static since we rebuild the HTML each time
+            const qrCodeId = 'article-qr-code-placeholder';
+
+            // 3. Set the carousel's inner HTML
+            carouselContent.innerHTML = `
+                <div class="article-card">
+                    <div class="article-content">
+                        <h3>
+                            <a href="${article.url}" target="_blank" rel="noopener noreferrer">
+                                ${article.title}
+                            </a>
+                        </h3>
+                        <p>${article.abstract}</p>
+                        
+                        ${imageUrl ? `<img src="${imageUrl}" alt="${imageAlt}" class="article-image">` : ''}
+                    </div>
+                    <div class="article-qrcode" id="${qrCodeId}"></div>
+                </div>
+            `;
+
+            // 4. Generate the QR code *after* the element is in the DOM
+            new QRCode(document.getElementById(qrCodeId), {
+                text: article.url,
+                width: 90,
+                height: 90,
+                colorDark : "#000000",
+                colorLight : "#ffffff",
+                correctLevel : QRCode.CorrectLevel.M
+            });
+
+            // 5. Update the slide indicator
+            slideIndicator.textContent = `${index + 1} / ${articlesData.length}`;
+        }
+
+        /**
+         * Fetches news from the NYT API
+         */
         async function fetchNews() {
             try {
                 const response = await fetch(apiUrl);
                 if (!response.ok) {
                     if (response.status === 401 || response.status === 403) {
-                        throw new Error("API Key error. Make sure your key is correct and has Top Stories API enabled.");
+                        throw new Error("API Key error. Make sure your key is correct.");
                     }
                     throw new Error(`Network error: ${response.statusText}`);
                 }
-
                 const data = await response.json();
-                
-                if (data.status !== "OK" || !data.results) {
-                    throw new Error("API returned an error or no results.");
+
+                // Filter out articles that are missing key info
+                articlesData = data.results
+                    .filter(a => a.title && a.url && a.abstract)
+                    .slice(0, ARTICLE_COUNT);
+
+                if (articlesData.length === 0) {
+                     throw new Error("No valid articles found.");
                 }
 
-                // Clear the "Loading..." message
+                // Hide loading and show nav
                 loadingMessage.style.display = 'none';
-                
-                // Get the first X articles
-                const articles = data.results.slice(0, ARTICLE_COUNT);
+                navContainer.style.display = 'flex';
 
-                articles.forEach((article, index) => {
-                    // We need valid data to proceed
-                    if (!article.title || !article.url || !article.abstract) {
-                        return; // Skip this article if it's missing key info
-                    }
-                
-                    // 1. Find an image
-                    // NYT multimedia array is ordered from largest to smallest.
-                    // Let's grab a medium-sized one (index 2) or the first one if it's all that exists.
-                    let imageUrl = "";
-                    let imageAlt = "Article image";
-                    if (article.multimedia && article.multimedia.length > 0) {
-                        const image = article.multimedia[2] || article.multimedia[0];
-                        imageUrl = image.url;
-                        imageAlt = image.caption || article.title;
-                    }
-
-                    // 2. Create the article card element
-                    const card = document.createElement('div');
-                    card.className = 'article-card';
-                    card.style.animationDelay = `${index * 100}ms`; // Stagger the fade-in
-
-                    // We need a unique ID for each QR code placeholder
-                    const qrCodeId = `qr-code-${index}`;
-
-                    // 3. Set the card's inner HTML
-                    card.innerHTML = `
-                        ${imageUrl ? `<img src="${imageUrl}" alt="${imageAlt}" class="article-image">` : '<div class="article-image-placeholder"></div>'}
-                        
-                        <div class="article-content">
-                            <h3>
-                                <a href="${article.url}" target="_blank" rel="noopener noreferrer">
-                                    ${article.title}
-                                </a>
-                            </h3>
-                            <p>${article.abstract}</p>
-                        </div>
-                        
-                        <div class="article-qrcode" id="${qrCodeId}"></div>
-                    `;
-
-                    // 5. Add the new card to the widget
-                    widgetContent.appendChild(card);
-
-                    // 6. Generate the QR code *after* the element is in the DOM
-                    new QRCode(document.getElementById(qrCodeId), {
-                        text: article.url,
-                        width: 80,
-                        height: 80,
-                        colorDark : "#000000",
-                        colorLight : "#ffffff",
-                        correctLevel : QRCode.CorrectLevel.M // Medium correction is good for URLs
-                    });
-                });
+                // Render the first article
+                currentIndex = 0;
+                renderArticle(currentIndex);
 
             } catch (error) {
                 console.error("Failed to fetch news:", error);
@@ -233,7 +286,21 @@
             }
         }
 
-        // Run the function when the page loads
+        // --- EVENT LISTENERS ---
+
+        nextBtn.onclick = function() {
+            // Move to the next index, looping back to 0 at the end
+            currentIndex = (currentIndex + 1) % articlesData.length;
+            renderArticle(currentIndex);
+        };
+
+        prevBtn.onclick = function() {
+            // Move to the previous index, looping to the end if at 0
+            currentIndex = (currentIndex - 1 + articlesData.length) % articlesData.length;
+            renderArticle(currentIndex);
+        };
+
+        // Run the fetch function when the page loads
         document.addEventListener('DOMContentLoaded', fetchNews);
     </script>
 

@@ -7,7 +7,6 @@
     <title>P2Gm Clock</title>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/moment.js/2.19.1/moment.min.js" integrity="sha512-Dz4zO7p6MrF+VcOD6PUbA08hK1rv0hDv/wGuxSUjImaUYxRyK2gLC6eQWVqyDN9IM1X/kUA8zkykJS/gEVOd3w==" crossorigin="anonymous" referrerpolicy="no-referrer"></script>
     <script src="https://code.jquery.com/jquery-3.7.1.slim.min.js" integrity="sha256-kmHvs0B+OpCW5GVHUNjv9rOmY0IvSIRcf7zGUDTDQM8=" crossorigin="anonymous"></script>
-	<script src="https://elfsightcdn.com/platform.js" async></script>
 </head>
 <body>
 <div>
@@ -15,7 +14,6 @@
 	<div id="date" class="caption dateText"></div>
 	<div id="time" class="caption timeText"></div>
 	<header class="d-flex flex-wrap justify-content-center py-3 mb-4 border-bottom">
-	<h1>Animated Weather Card</h1>
 </header>
 <div class="container mt-5">
 	<div class="card">
@@ -40,18 +38,7 @@
 		</div>
 	</div>
 </div>
-<div class="container mt-5">
-	<div class="card credit">
-		<div class="card-body">
-			<h5>Credits</h5>
-			<a href="https://codepen.io/ecemgo" target="_blank">Ecem Gokdogan</a> - <a href="https://codepen.io/ecemgo/pen/qBvBXqP" target="_blank">Login Form with Snow</a><br>
-			<a href="https://codepen.io/ruigewaard" target="_blank">Max Ruigewaard</a> - <a href="https://codepen.io/ruigewaard/pen/Podmea" target="_blank">Rain on HTML5 Canvas</a><br>
-			<a href="https://codepen.io/shivaji-bhardwaj" target="_blank">Shivaji Bhardwaj</a> - <a href="https://codepen.io/shivaji-bhardwaj/pen/zYOMRmy" target="_blank">Fluffy Clouds</a><br>
-			Moon by <a href="https://freepik.com" target="_blank">Freepik</a>
-			</h5>
-		</div>
-	</div>
-</div>
+
 <style>
    @import url(https://fonts.googleapis.com/css?family=Source+Sans+Pro:300,400,600,700,900&subset=latin,latin-ext);
      body { padding: 0; margin: 0; background-color: #222; overflow: hidden; }
@@ -70,13 +57,12 @@
 	@import url("https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:ital,wght@0,200..800;1,200..800&display=swap");
 
 body {
-	background: #f5f5f5;
 	font-family: "Plus Jakarta Sans", sans-serif;
 	font-weight: 300;
 }
 
 header {
-	padding: 16px;
+	padding: 4px;
 	text-align: center;
 }
 
@@ -91,11 +77,11 @@ h5 {
 .card {
 	position: relative;
 	overflow: hidden; /* Ensure vertical scrolling */
-	height: 566px;
-	width: 350px;
+	height: 300px;
+	width: 240px;
 	margin: auto;
 	border: none;
-	border-radius: 32px;
+	border-radius: 0px;
 }
 
 .sun,
@@ -106,7 +92,7 @@ h5 {
 	width: 80px;
 	height: 80px;
 	border-radius: 50%;
-	transform-origin: 0px 220px;
+	transform-origin: 180px 280px
 	transition: all 1s;
 	transform: rotate(-90deg); /* Initial rotation of -90 degrees */
 }
@@ -140,8 +126,7 @@ h5 {
 	bottom: 0;
 	left: 0;
 	width: 100%;
-	overflow-x: scroll;
-	white-space: nowrap;
+	overflow-x: hidden;
 	backdrop-filter: blur(20px);
 }
 

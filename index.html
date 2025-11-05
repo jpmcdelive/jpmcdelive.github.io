@@ -1160,7 +1160,17 @@ if (canvas.getContext) {
 
         // --- EVENT LISTENERS ---
 
+        nextBtn.onclick = function() {
+            // Move to the next index, looping back to 0 at the end
+            currentIndex = (currentIndex + 1) % articlesData.length;
+            renderArticle(currentIndex);
+        };
 
+        prevBtn.onclick = function() {
+            // Move to the previous index, looping to the end if at 0
+            currentIndex = (currentIndex - 1 + articlesData.length) % articlesData.length;
+            renderArticle(currentIndex);
+        };
 
         // Run the fetch function when the page loads
         document.addEventListener('DOMContentLoaded', fetchNews);

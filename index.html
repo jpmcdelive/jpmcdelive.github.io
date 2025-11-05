@@ -39,6 +39,19 @@
 		</div>
 	</div>
 </div>
+<div id="news-widget">
+        <header>
+            <h2>New York Times Headlines</h2>
+        </header>
+        
+        <div id="carousel-content">
+            <div id="loading-message" class="loading">
+                Loading news...
+            </div>
+            </div>
+        
+       
+    </div>
 
 <style>
    @import url(https://fonts.googleapis.com/css?family=Source+Sans+Pro:300,400,600,700,900&subset=latin,latin-ext);
@@ -880,5 +893,277 @@ if (canvas.getContext) {
 
 	
 </script>
-</body>
+
+
+    <script src="https://cdn.jsdelivr.net/npm/qrcodejs@1.0.0/qrcode.min.js"></script>
+
+    <style>
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+            background-color: #f4f4f4;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            padding: 20px;
+        }
+
+        #news-widget {
+            width: 100%;
+            max-width: 600px;
+            background-color: #ffffff;
+            border-radius: 8px;
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05);
+            overflow: hidden;
+        }
+
+        header {
+            padding: 16px 20px;
+            border-bottom: 1px solid #eee;
+            background-color: #fafafa;
+        }
+
+        header h2 {
+            margin: 0;
+            font-size: 20px;
+        }
+
+        /* This container holds the single, changing article */
+        #carousel-content {
+            padding: 20px;
+            /* Set a consistent height */
+            min-height: 250px;
+        }
+        
+        /* Styles for the article card itself */
+        .article-card {
+            display: flex;
+            gap: 15px;
+            animation: fadeIn 0.4s ease-out;
+        }
+
+        .article-image {
+            width: 120px;
+            height: 120px;
+            object-fit: cover;
+            border-radius: 6px;
+            flex-shrink: 0;
+        }
+
+        .article-content {
+            flex-grow: 1;
+            min-width: 0; /* Fix for flexbox overflow */
+        }
+
+        .article-content h3 {
+            margin: 0 0 5px 0;
+            font-size: 18px;
+        }
+
+        .article-content a {
+            text-decoration: none;
+            color: #121212;
+        }
+
+        .article-content a:hover {
+            text-decoration: underline;
+        }
+
+        .article-content p {
+            margin: 0 0 15px 0;
+            font-size: 14px;
+            color: #555;
+            display: -webkit-box;
+            -webkit-line-clamp: 4;
+            -webkit-box-orient: vertical;
+            overflow: hidden;
+        }
+
+        /* QR Code is now part of the main content */
+        .article-qrcode {
+            width: 90px;
+            height: 90px;
+            flex-shrink: 0;
+        }
+        
+        .article-qrcode canvas,
+        .article-qrcode img {
+            padding: 4px;
+            background: #fff;
+            box-shadow: 0 1px 3px rgba(0,0,0,0.1);
+        }
+
+        /* Navigation styles */
+        #carousel-nav {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 10px 20px;
+            border-top: 1px solid #eee;
+            background-color: #fafafa;
+        }
+
+        #carousel-nav button {
+            background-color: #007aff;
+            color: white;
+            border: none;
+            padding: 8px 14px;
+            border-radius: 5px;
+            font-size: 14px;
+            font-weight: 500;
+            cursor: pointer;
+        }
+        
+        #carousel-nav button:hover {
+            background-color: #0056b3;
+        }
+        
+        #carousel-nav button:disabled {
+            background-color: #ccc;
+            cursor: not-allowed;
+        }
+
+        #slide-indicator {
+            font-size: 14px;
+            color: #555;
+            font-weight: 500;
+        }
+
+        .loading, .error {
+            text-align: center;
+            padding: 40px;
+            font-size: 16px;
+            color: #777;
+        }
+        
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(5px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+    </style>
+
+    
+
+    <script>
+        // --- CONFIGURATION ---
+        // ⚠️ PASTE YOUR NYT API KEY HERE
+        const NYT_API_KEY = "fA2AACnKOZWVnU8C0kcCLkivelqlxDQc";
+        const NYT_SECTION = "home"; 
+        const ARTICLE_COUNT = 7;
+        // --- END CONFIGURATION ---
+
+        // Global variables
+        let articlesData = [];
+        let currentIndex = 0;
+
+        // DOM Elements
+        const carouselContent = document.getElementById('carousel-content');
+        const loadingMessage = document.getElementById('loading-message');
+        const navContainer = document.getElementById('carousel-nav');
+        const prevBtn = document.getElementById('prev-btn');
+        const nextBtn = document.getElementById('next-btn');
+        const slideIndicator = document.getElementById('slide-indicator');
+
+        const apiUrl = `https://api.nytimes.com/svc/topstories/v2/${NYT_SECTION}.json?api-key=${NYT_API_KEY}`;
+
+        // --- FUNCTIONS ---
+
+        /**
+         * Renders a single article card into the carousel content area.
+         * @param {number} index - The index of the article to render from articlesData.
+         */
+        function renderArticle(index) {
+            if (articlesData.length === 0) return;
+
+            const article = articlesData[index];
+            
+            // 1. Find a valid image
+            let imageUrl = "";
+            let imageAlt = "Article image";
+            if (article.multimedia && article.multimedia.length > 0) {
+                const image = article.multimedia[2] || article.multimedia[0];
+                imageUrl = image.url;
+                imageAlt = image.caption || article.title;
+            }
+
+            // 2. Define the unique ID for the QR code container
+            // This ID can be static since we rebuild the HTML each time
+            const qrCodeId = 'article-qr-code-placeholder';
+
+            // 3. Set the carousel's inner HTML
+            carouselContent.innerHTML = `
+                <div class="article-card">
+                    <div class="article-content">                       
+                        ${imageUrl ? `<img src="${imageUrl}" alt="${imageAlt}" class="article-image">` : ''}
+						<h3>
+                            <a href="${article.url}" target="_blank" rel="noopener noreferrer">
+                                ${article.title}
+                            </a>
+                        </h3>
+						<p>${article.abstract}</p>
+                    </div>
+                    <div class="article-qrcode" id="${qrCodeId}"></div>
+                </div>
+            `;
+
+            // 4. Generate the QR code *after* the element is in the DOM
+            new QRCode(document.getElementById(qrCodeId), {
+                text: article.url,
+                width: 90,
+                height: 90,
+                colorDark : "#000000",
+                colorLight : "#ffffff",
+                correctLevel : QRCode.CorrectLevel.M
+            });
+
+            // 5. Update the slide indicator
+            slideIndicator.textContent = `${index + 1} / ${articlesData.length}`;
+        }
+
+        /**
+         * Fetches news from the NYT API
+         */
+        async function fetchNews() {
+            try {
+                const response = await fetch(apiUrl);
+                if (!response.ok) {
+                    if (response.status === 401 || response.status === 403) {
+                        throw new Error("API Key error. Make sure your key is correct.");
+                    }
+                    throw new Error(`Network error: ${response.statusText}`);
+                }
+                const data = await response.json();
+
+                // Filter out articles that are missing key info
+                articlesData = data.results
+                    .filter(a => a.title && a.url && a.abstract)
+                    .slice(0, ARTICLE_COUNT);
+
+                if (articlesData.length === 0) {
+                     throw new Error("No valid articles found.");
+                }
+
+                // Hide loading and show nav
+                loadingMessage.style.display = 'none';
+                navContainer.style.display = 'flex';
+
+                // Render the first article
+                currentIndex = 0;
+                renderArticle(currentIndex);
+
+            } catch (error) {
+                console.error("Failed to fetch news:", error);
+                loadingMessage.textContent = `Failed to load news. ${error.message}`;
+                loadingMessage.className = 'error';
+            }
+        }
+
+        // --- EVENT LISTENERS ---
+
+
+
+        // Run the fetch function when the page loads
+        document.addEventListener('DOMContentLoaded', fetchNews);
+    </script>
+
+	</body>
 </html>

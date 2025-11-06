@@ -1,14 +1,13 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-    <meta charset="UTF-8">
+    <meta charset="UTF-R">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Weather Widget</title>
+    <title>Dynamic Weather Widget</title>
     
     <style>
         body {
             font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
-            /* Added a light background to see the widget */
             background-color: #f0f0f0; 
             display: grid;
             place-items: center;
@@ -16,12 +15,13 @@
         }
 
         .weather-widget {
-            background: #6c757d; /* Grey background from your image */
+            background: linear-gradient(rgba(0,0,0,0.3), rgba(0,0,0,0.3)), url('https://source.unsplash.com/random/250x300/?sky') no-repeat center center / cover; 
             color: white;
             padding: 20px;
             border-radius: 12px;
             width: 250px;
             box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+            transition: background-image 0.5s ease-in-out;
         }
 
         .current-weather {
@@ -32,7 +32,7 @@
         }
 
         .current-temp {
-            font-size: 3.5rem; /* 56px */
+            font-size: 3.5rem;
             font-weight: 600;
             line-height: 1;
         }
@@ -96,12 +96,12 @@
         
         <div class="forecast">
             <div class="forecast-item">
-                <div class="forecast-time">01:00 PM</div>
+                <div class="forecast-time" id="forecast-time-1">--:-- --</div>
                 <img src="" alt="Icon" class="forecast-icon" id="forecast-icon-1">
                 <div class="forecast-temp" id="forecast-temp-1">--°</div>
             </div>
             <div class="forecast-item">
-                <div class="forecast-time">04:00 PM</div>
+                <div class="forecast-time" id="forecast-time-2">--:-- --</div>
                 <img src="" alt="Icon" class="forecast-icon" id="forecast-icon-2">
                 <div class="forecast-temp" id="forecast-temp-2">--°</div>
             </div>
@@ -122,53 +122,94 @@
 
         // ------------------------------------------------------------------
 
+        // Mapping weather conditions to Unsplash image search terms
+        const weatherBackgrounds = {
+            'clear': 'clear sky', 'clouds': 'cloudy sky', 'rain': 'rainy weather',
+            'drizzle': 'drizzle rain', 'thunderstorm': 'thunderstorm lightning',
+            'snow': 'snowy landscape', 'mist': 'mist fog', 'fog': 'foggy forest',
+            'default': 'weather background'
+        };
+
+        /**
+         * NEW: Function to map OpenWeatherMap icon codes to animated SVG icons
+         * from https://github.com/basmilius/weather-icons
+         */
+        function mapOwmIconToSvg(iconCode) {
+            const iconMap = {
+                '01d': 'clear-day', '01n': 'clear-night',
+                '02d': 'partly-cloudy-day', '02n': 'partly-cloudy-night',
+                '03d': 'cloudy', '03n': 'cloudy',
+                '04d': 'overcast-day', '04n': 'overcast-night',
+                '09d': 'drizzle', '09n': 'drizzle',
+                '10d': 'partly-cloudy-day-rain', '10n': 'partly-cloudy-night-rain',
+                '11d': 'thunderstorms-day-rain', '11n': 'thunderstorms-night-rain',
+                '13d': 'partly-cloudy-day-snow', '13n': 'partly-cloudy-night-snow',
+                '50d': 'fog-day', '50n': 'fog-night',
+            };
+            // The icon set also has generic "overcast", "rain", "snow", etc.
+            // We use the specific ones when available, or fall back.
+            return iconMap[iconCode] || 'cloudy'; // Fallback to 'cloudy'
+        }
+
+        /**
+         * NEW: Helper function to format UNIX timestamp to readable time
+         */
+        function formatTime(timestamp) {
+            const date = new Date(timestamp * 1000);
+            let hours = date.getHours();
+            const ampm = hours >= 12 ? 'PM' : 'AM';
+            hours = hours % 12;
+            hours = hours ? hours : 12; // the hour '0' should be '12'
+            return `${hours} ${ampm}`; // Simplified to just the hour, e.g., "4 PM"
+        }
+
+        // Function to update the widget background
+        function updateBackground(weatherMain) {
+            const searchTerm = weatherBackgrounds[weatherMain.toLowerCase()] || weatherBackgrounds['default'];
+            const widget = document.querySelector('.weather-widget');
+            widget.style.backgroundImage = `linear-gradient(rgba(0,0,0,0.3), rgba(0,0,0,0.3)), url('https://source.unsplash.com/random/250x300/?${searchTerm}')`;
+        }
+
         // Function to fetch and display weather
         async function fetchWeather() {
-            // We use the '5 day / 3 hour forecast' to get hourly data
-            const apiUrl = `https://api.openweathermap.org/data/2.5/forecast?q=${city}&appid=${apiKey}&units=imperial`; // Use 'metric' for Celsius
+            const apiUrl = `https://api.openweathermap.org/data/2.5/forecast?q=${city}&appid=${apiKey}&units=imperial`;
 
             try {
                 const response = await fetch(apiUrl);
-                if (!response.ok) {
-                    throw new Error(`HTTP error! status: ${response.status}`);
-                }
+                if (!response.ok) throw new Error(`HTTP error! status: ${response.status}`);
                 const data = await response.json();
 
                 // --- 1. Update Current Weather ---
-                // We'll use the first item in the forecast list as the "current" weather
                 const current = data.list[0];
+                const currentIconCode = current.weather[0].icon;
+                
                 document.getElementById('current-temp').textContent = `${Math.round(current.main.temp)}°`;
                 document.getElementById('current-description').textContent = current.weather[0].description;
-                document.getElementById('current-icon').src = `https://openweathermap.org/img/wn/${current.weather[0].icon}@2x.png`;
-
-                // --- 2. Update Hourly Forecast ---
+                document.getElementById('current-icon').src = `https://cdn.jsdelivr.net/gh/basmilius/weather-icons/production/fill/svg/${mapOwmIconToSvg(currentIconCode)}.svg`;
                 
-                // Find the forecast for 1:00 PM (13:00)
-                const forecast1PM = data.list.find(item => {
-                    const forecastTime = new Date(item.dt * 1000);
-                    return forecastTime.getHours() === 13;
-                });
+                updateBackground(current.weather[0].main);
 
-                // Find the forecast for 4:00 PM (16:00)
-                const forecast4PM = data.list.find(item => {
-                    const forecastTime = new Date(item.dt * 1000);
-                    return forecastTime.getHours() === 16;
-                });
+                // --- 2. UPDATE: Hourly Forecast now uses next 2 API entries ---
+                
+                // Get the next 3-hour forecast (index 1)
+                const forecast1 = data.list[1]; 
+                // Get the 6-hour forecast (index 2)
+                const forecast2 = data.list[2]; 
 
-                // Update the 1:00 PM forecast block
-                if (forecast1PM) {
-                    document.getElementById('forecast-temp-1').textContent = `${Math.round(forecast1PM.main.temp)}°`;
-                    document.getElementById('forecast-icon-1').src = `https://openweathermap.org/img/wn/${forecast1PM.weather[0].icon}@2x.png`;
-                } else {
-                    document.getElementById('forecast-temp-1').textContent = 'N/A';
+                // Update the first forecast block
+                if (forecast1) {
+                    const forecast1IconCode = forecast1.weather[0].icon;
+                    document.getElementById('forecast-time-1').textContent = formatTime(forecast1.dt);
+                    document.getElementById('forecast-temp-1').textContent = `${Math.round(forecast1.main.temp)}°`;
+                    document.getElementById('forecast-icon-1').src = `https://cdn.jsdelivr.net/gh/basmilius/weather-icons/production/fill/svg/${mapOwmIconToSvg(forecast1IconCode)}.svg`;
                 }
 
-                // Update the 4:00 PM forecast block
-                if (forecast4PM) {
-                    document.getElementById('forecast-temp-2').textContent = `${Math.round(forecast4PM.main.temp)}°`;
-                    document.getElementById('forecast-icon-2').src = `https://openweathermap.org/img/wn/${forecast4PM.weather[0].icon}@2x.png`;
-                } else {
-                    document.getElementById('forecast-temp-2').textContent = 'N/A';
+                // Update the second forecast block
+                if (forecast2) {
+                    const forecast2IconCode = forecast2.weather[0].icon;
+                    document.getElementById('forecast-time-2').textContent = formatTime(forecast2.dt);
+                    document.getElementById('forecast-temp-2').textContent = `${Math.round(forecast2.main.temp)}°`;
+                    document.getElementById('forecast-icon-2').src = `https://cdn.jsdelivr.net/gh/basmilius/weather-icons/production/fill/svg/${mapOwmIconToSvg(forecast2IconCode)}.svg`;
                 }
 
             } catch (error) {
@@ -177,7 +218,6 @@
             }
         }
 
-        // Run the function when the page loads
         document.addEventListener('DOMContentLoaded', fetchWeather);
     </script>
 

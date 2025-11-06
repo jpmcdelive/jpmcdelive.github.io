@@ -16,7 +16,7 @@
 	<div id="time" class="caption timeText"></div>
 	<header class="d-flex flex-wrap justify-content-center py-3 mb-4 border-bottom">
 </header>
-<div class="container mt-5">
+<div  class="container mt-5">
 	<div class="card">
 		<div class="card-body">
 			<div class="backgroundNight"></div>
@@ -920,9 +920,6 @@ if (canvas.getContext) {
             overflow: hidden;
         }
 
-        header {
-
-        }
 
         header h2 {
             margin: 0;
@@ -1069,43 +1066,21 @@ if (canvas.getContext) {
 
         const apiUrl = `https://api.nytimes.com/svc/topstories/v2/${NYT_SECTION}.json?api-key=${NYT_API_KEY}`;
 
-        // --- FUNCTIONS ---
-
-        /**
-         * Renders a single article card into the carousel content area.
-         * @param {number} index - The index of the article to render from articlesData.
-         */
-
-		
-		<script>
-        // ------------------------------------------------------------------
-        // --- CONFIGURATION: CHANGE THESE VALUES ---
-        // ------------------------------------------------------------------
-
-        // 1. Get your free API key from https://openweathermap.org/appid
-        const apiKey = 'YOUR_API_KEY_HERE'; 
+        const apiKey = 'cc89b86463a5016e19b544c61d9a9117'; 
 
         // 2. Set your city
         const city = 'New York'; 
 
-        // ------------------------------------------------------------------
-
-        // Function to fetch and display weather
         async function fetchWeather() {
-            // We use the '5 day / 3 hour forecast' to get hourly data
             const apiUrl = `https://api.openweathermap.org/data/2.5/forecast?q=${city}&appid=${apiKey}&units=imperial`; // Use 'metric' for Celsius
-
             try {
                 const response = await fetch(apiUrl);
                 if (!response.ok) {
                     throw new Error(`HTTP error! status: ${response.status}`);
                 }
                 const data = await response.json();
-
-                // --- 1. Update Current Weather ---	
-                // We'll use the first item in the forecast list as the "current" weather
                 const current = data.list[0];
-                document.getElementById('temperature').textContent = `${Math.round(current.main.temp)}°`;
+                document.getElementById('current-temperature').textContent = `${Math.round(current.main.temp)}°`;
                 document.getElementById('current-description').textContent = current.weather[0].description;
                 document.getElementById('current-icon').src = `https://openweathermap.org/img/wn/${current.weather[0].icon}@2x.png`;
 

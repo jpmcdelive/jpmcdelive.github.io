@@ -15,6 +15,7 @@
         }
 
         .weather-widget {
+            /* --- DEFAULT BACKGROUND SET HERE --- */
             background: linear-gradient(rgba(0,0,0,0.3), rgba(0,0,0,0.3)), url('https://source.unsplash.com/random/250x300/?sky') no-repeat center center / cover; 
             color: white;
             padding: 20px;
@@ -115,14 +116,18 @@
         // ------------------------------------------------------------------
 
         // 1. Get your free API key from https://openweathermap.org/appid
-        const apiKey = 'cc89b86463a5016e19b544c61d9a9117'; 
+        const apiKey = 'YOUR_API_KEY_HERE'; 
 
         // 2. Set your city
         const city = 'New York'; 
 
         // ------------------------------------------------------------------
 
-        // Mapping weather conditions to Unsplash image search terms
+        // Base URL for animated icons
+        const iconBaseUrl = 'https://cdn.jsdelivr.net/gh/basmilius/weather-icons/production/fill/svg/';
+        // Default icon to use on error
+        const defaultIcon = 'cloudy.svg';
+
         const weatherBackgrounds = {
             'clear': 'clear sky', 'clouds': 'cloudy sky', 'rain': 'rainy weather',
             'drizzle': 'drizzle rain', 'thunderstorm': 'thunderstorm lightning',
@@ -130,10 +135,6 @@
             'default': 'weather background'
         };
 
-        /**
-         * NEW: Function to map OpenWeatherMap icon codes to animated SVG icons
-         * from https://github.com/basmilius/weather-icons
-         */
         function mapOwmIconToSvg(iconCode) {
             const iconMap = {
                 '01d': 'clear-day', '01n': 'clear-night',
@@ -146,37 +147,57 @@
                 '13d': 'partly-cloudy-day-snow', '13n': 'partly-cloudy-night-snow',
                 '50d': 'fog-day', '50n': 'fog-night',
             };
-            // The icon set also has generic "overcast", "rain", "snow", etc.
-            // We use the specific ones when available, or fall back.
             return iconMap[iconCode] || 'cloudy'; // Fallback to 'cloudy'
         }
 
-        /**
-         * NEW: Helper function to format UNIX timestamp to readable time
-         */
         function formatTime(timestamp) {
             const date = new Date(timestamp * 1000);
             let hours = date.getHours();
             const ampm = hours >= 12 ? 'PM' : 'AM';
             hours = hours % 12;
-            hours = hours ? hours : 12; // the hour '0' should be '12'
-            return `${hours} ${ampm}`; // Simplified to just the hour, e.g., "4 PM"
+            hours = hours ? hours : 12; 
+            return `${hours} ${ampm}`;
         }
 
-        // Function to update the widget background
         function updateBackground(weatherMain) {
             const searchTerm = weatherBackgrounds[weatherMain.toLowerCase()] || weatherBackgrounds['default'];
             const widget = document.querySelector('.weather-widget');
             widget.style.backgroundImage = `linear-gradient(rgba(0,0,0,0.3), rgba(0,0,0,0.3)), url('https://source.unsplash.com/random/250x300/?${searchTerm}')`;
         }
+        
+        /**
+         * --- NEW: Function to set default error state ---
+         */
+        function setErrorState() {
+            console.error('Error fetching weather data. Setting default state.');
+            
+            document.getElementById('current-description').textContent = 'Failed to load';
+            document.getElementById('current-temp').textContent = '--°';
+            
+            // Set default "cloudy" icons
+            document.getElementById('current-icon').src = iconBaseUrl + defaultIcon;
+            document.getElementById('forecast-icon-1').src = iconBaseUrl + defaultIcon;
+            document.getElementById('forecast-icon-2').src = iconBaseUrl + defaultIcon;
+            
+            // Background is already set by default in CSS, so no action needed here.
+        }
 
-        // Function to fetch and display weather
         async function fetchWeather() {
+            // Check if API key is placeholder
+            if (apiKey === 'YOUR_API_KEY_HERE') {
+                setErrorState();
+                console.error('API key is still the placeholder. Please replace it.');
+                document.getElementById('current-description').textContent = 'Set API Key';
+                return;
+            }
+
             const apiUrl = `https://api.openweathermap.org/data/2.5/forecast?q=${city}&appid=${apiKey}&units=imperial`;
 
             try {
                 const response = await fetch(apiUrl);
-                if (!response.ok) throw new Error(`HTTP error! status: ${response.status}`);
+                if (!response.ok) {
+                    throw new Error(`HTTP error! status: ${response.status}`);
+                }
                 const data = await response.json();
 
                 // --- 1. Update Current Weather ---
@@ -185,40 +206,47 @@
                 
                 document.getElementById('current-temp').textContent = `${Math.round(current.main.temp)}°`;
                 document.getElementById('current-description').textContent = current.weather[0].description;
-                document.getElementById('current-icon').src = `https://cdn.jsdelivr.net/gh/basmilius/weather-icons/production/fill/svg/${mapOwmIconToSvg(currentIconCode)}.svg`;
+                document.getElementById('current-icon').src = `${iconBaseUrl}${mapOwmIconToSvg(currentIconCode)}.svg`;
                 
                 updateBackground(current.weather[0].main);
 
-                // --- 2. UPDATE: Hourly Forecast now uses next 2 API entries ---
-                
-                // Get the next 3-hour forecast (index 1)
+                // --- 2. Update Hourly Forecast ---
                 const forecast1 = data.list[1]; 
-                // Get the 6-hour forecast (index 2)
                 const forecast2 = data.list[2]; 
 
-                // Update the first forecast block
                 if (forecast1) {
                     const forecast1IconCode = forecast1.weather[0].icon;
                     document.getElementById('forecast-time-1').textContent = formatTime(forecast1.dt);
                     document.getElementById('forecast-temp-1').textContent = `${Math.round(forecast1.main.temp)}°`;
-                    document.getElementById('forecast-icon-1').src = `https://cdn.jsdelivr.net/gh/basmilius/weather-icons/production/fill/svg/${mapOwmIconToSvg(forecast1IconCode)}.svg`;
+                    document.getElementById('forecast-icon-1').src = `${iconBaseUrl}${mapOwmIconToSvg(forecast1IconCode)}.svg`;
                 }
 
-                // Update the second forecast block
                 if (forecast2) {
                     const forecast2IconCode = forecast2.weather[0].icon;
                     document.getElementById('forecast-time-2').textContent = formatTime(forecast2.dt);
                     document.getElementById('forecast-temp-2').textContent = `${Math.round(forecast2.main.temp)}°`;
-                    document.getElementById('forecast-icon-2').src = `https://cdn.jsdelivr.net/gh/basmilius/weather-icons/production/fill/svg/${mapOwmIconToSvg(forecast2IconCode)}.svg`;
+                    document.getElementById('forecast-icon-2').src = `${iconBaseUrl}${mapOwmIconToSvg(forecast2IconCode)}.svg`;
                 }
 
             } catch (error) {
-                console.error('Error fetching weather data:', error);
-                document.getElementById('current-description').textContent = 'Error';
+                // --- UPDATED CATCH BLOCK ---
+                setErrorState();
             }
         }
-
-        document.addEventListener('DOMContentLoaded', fetchWeather);
+        
+        // --- NEW: Add a listener in case the icons fail to load ---
+        document.addEventListener('DOMContentLoaded', () => {
+            fetchWeather();
+            
+            // Add error listeners to all images
+            document.querySelectorAll('img').forEach(img => {
+                img.addEventListener('error', () => {
+                    // If an icon fails to load, replace it with the default
+                    console.warn(`Failed to load image: ${img.src}. Replacing with default.`);
+                    img.src = iconBaseUrl + defaultIcon;
+                });
+            });
+        });
     </script>
 
 </body>

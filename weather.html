@@ -124,9 +124,9 @@
         // ------------------------------------------------------------------
 
         // Base URL for animated icons
-        const iconBaseUrl = 'https://cdn.jsdelivr.net/gh/basmilius/weather-icons/production/fill/svg/';
+        const iconBaseUrl = 'https://bmcdn.nl/assets/weather-icons/v3.0/fill/svg/';
         // Default icon to use on error
-        const defaultIcon = 'cloudy.svg';
+        const defaultIcon = 'clear-day.svg';
 
         const weatherBackgrounds = {
             'clear': 'clear sky', 'clouds': 'cloudy sky', 'rain': 'rainy weather',
@@ -162,6 +162,18 @@
         function updateBackground(weatherMain) {
             const searchTerm = weatherBackgrounds[weatherMain.toLowerCase()] || weatherBackgrounds['default'];
             const widget = document.querySelector('.weather-widget');
+
+            request = new XMLHttpRequest();
+                request.open("GET", "https://source.unsplash.com/random/1920x1080/?searchTerm", true);
+                request.send(null);
+                request.onreadystatechange = function() {
+	                if (request.readyState === 4) {
+		            if (request.status === 200) {
+			    console.log(request.responseURL);
+		}
+	}
+}
+            
             widget.style.backgroundImage = `linear-gradient(rgba(0,0,0,0.3), rgba(0,0,0,0.3)), url('https://source.unsplash.com/random/250x300/?${searchTerm}')`;
         }
         

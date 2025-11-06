@@ -16,7 +16,8 @@
 
         .weather-widget {
             /* --- DEFAULT BACKGROUND SET HERE --- */
-            background: linear-gradient(rgba(0,0,0,0.3), rgba(0,0,0,0.3)), url('https://source.unsplash.com/random/250x300/?sky') no-repeat center center / cover; 
+            background: linear-gradient(rgba(0,0,0,0.3), rgba(0,0,0,0.3)), url('https://images.unsplash.com/photo-1534088563585-c3E806f153d8?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=MnwzODU4MjZ8MHwxfHJhbmRvbXx8fHx8fHx8fDE2NzM0MjYxNTE&ixlib=rb-4.0.3&q=80&w=400') no-repeat center center / cover; 
+            /* I've used a static default Unsplash image URL just in case */
             color: white;
             padding: 20px;
             border-radius: 12px;
@@ -112,22 +113,25 @@
 
     <script>
         // ------------------------------------------------------------------
-        // --- CONFIGURATION: CHANGE THESE VALUES ---
+        // --- CONFIGURATION: YOU NOW NEED TWO API KEYS ---
         // ------------------------------------------------------------------
 
-        // 1. Get your free API key from https://openweathermap.org/appid
-        const apiKey = 'cc89b86463a5016e19b544c61d9a9117'; 
+        // 1. Get your free weather API key from https://openweathermap.org/appid
+        const weatherApiKey = 'cc89b86463a5016e19b544c61d9a9117'; 
 
-        // 2. Set your city
+        // 2. *** NEW *** Get your Unsplash Access Key from https://unsplash.com/developers
+        const unsplashApiKey = 'VQZFbs5zX4fJECBRq2VN0R9TgBMPOrM7r6d2ZH0qmEs';
+
+        // 3. Set your city
         const city = 'New York'; 
 
         // ------------------------------------------------------------------
 
         // Base URL for animated icons
-        const iconBaseUrl = 'https://bmcdn.nl/assets/weather-icons/v3.0/fill/svg/'; 
-        // Default icon to use on error
-        const defaultIcon = 'clear-day.svg';
+        const iconBaseUrl = 'https://bmcdn.nl/assets/weather-icons/v3.0/fill/svg/';
+        const defaultIcon = 'cloudy.svg';
 
+        // Mapping for search terms
         const weatherBackgrounds = {
             'clear': 'clear sky', 'clouds': 'cloudy sky', 'rain': 'rainy weather',
             'drizzle': 'drizzle rain', 'thunderstorm': 'thunderstorm lightning',
@@ -147,7 +151,7 @@
                 '13d': 'partly-cloudy-day-snow', '13n': 'partly-cloudy-night-snow',
                 '50d': 'fog-day', '50n': 'fog-night',
             };
-            return iconMap[iconCode] || 'cloudy'; // Fallback to 'cloudy'
+            return iconMap[iconCode] || 'cloudy';
         }
 
         function formatTime(timestamp) {
@@ -159,68 +163,76 @@
             return `${hours} ${ampm}`;
         }
 
-        function updateBackground(weatherMain) {
+        /**
+         * --- NEW: Function to update background using the Unsplash API ---
+         */
+        async function updateBackgroundFromApi(weatherMain) {
+            if (unsplashApiKey === 'YOUR_UNSPLASH_ACCESS_KEY_HERE') {
+                console.warn('Unsplash API key not set. Using default background.');
+                return; // Exit if the Unsplash key is not set
+            }
+
             const searchTerm = weatherBackgrounds[weatherMain.toLowerCase()] || weatherBackgrounds['default'];
+            const unsplashApiUrl = `https://api.unsplash.com/photos/random?query=${searchTerm}&client_id=${unsplashApiKey}&orientation=portrait`;
+            
             const widget = document.querySelector('.weather-widget');
 
-            request = new XMLHttpRequest();
-                request.open("GET", "https://source.unsplash.com/random/1920x1080/?searchTerm", true);
-                request.send(null);
-                request.onreadystatechange = function() {
-	                if (request.readyState === 4) {
-		            if (request.status === 200) {
-			    console.log(request.responseURL);
-		}
-	}
-}
-            
-            widget.style.backgroundImage = `linear-gradient(rgba(0,0,0,0.3), rgba(0,0,0,0.3)), url('https://source.unsplash.com/random/250x300/?${searchTerm}')`;
+            try {
+                const response = await fetch(unsplashApiUrl);
+                if (!response.ok) {
+                    throw new Error(`Unsplash API error! status: ${response.status}`);
+                }
+                const data = await response.json();
+                
+                // Get the image URL. 'regular' is a good size.
+                const imageUrl = data.urls.regular; 
+                
+                // Set the new background
+                widget.style.backgroundImage = `linear-gradient(rgba(0,0,0,0.3), rgba(0,0,0,0.3)), url('${imageUrl}')`;
+
+            } catch (error) {
+                console.error('Error fetching Unsplash background:', error);
+                // On error, the default background from the CSS will remain.
+            }
         }
         
-        /**
-         * --- NEW: Function to set default error state ---
-         */
         function setErrorState() {
             console.error('Error fetching weather data. Setting default state.');
             
             document.getElementById('current-description').textContent = 'Failed to load';
             document.getElementById('current-temp').textContent = '--°';
-            
-            // Set default "cloudy" icons
             document.getElementById('current-icon').src = iconBaseUrl + defaultIcon;
             document.getElementById('forecast-icon-1').src = iconBaseUrl + defaultIcon;
             document.getElementById('forecast-icon-2').src = iconBaseUrl + defaultIcon;
-            
-            // Background is already set by default in CSS, so no action needed here.
         }
 
         async function fetchWeather() {
-            // Check if API key is placeholder
-            if (apiKey === 'YOUR_API_KEY_HERE') {
+            if (weatherApiKey === 'YOUR_OPENWEATHERMAP_API_KEY_HERE') {
                 setErrorState();
-                console.error('API key is still the placeholder. Please replace it.');
+                console.error('Weather API key is placeholder. Please replace it.');
                 document.getElementById('current-description').textContent = 'Set API Key';
                 return;
             }
 
-            const apiUrl = `https://api.openweathermap.org/data/2.5/forecast?q=${city}&appid=${apiKey}&units=imperial`;
+            const apiUrl = `https://api.openweathermap.org/data/2.5/forecast?q=${city}&appid=${weatherApiKey}&units=imperial`;
 
             try {
                 const response = await fetch(apiUrl);
-                if (!response.ok) {
-                    throw new Error(`HTTP error! status: ${response.status}`);
-                }
+                if (!response.ok) throw new Error(`HTTP error! status: ${response.status}`);
                 const data = await response.json();
 
                 // --- 1. Update Current Weather ---
                 const current = data.list[0];
                 const currentIconCode = current.weather[0].icon;
+                const weatherMain = current.weather[0].main;
                 
                 document.getElementById('current-temp').textContent = `${Math.round(current.main.temp)}°`;
                 document.getElementById('current-description').textContent = current.weather[0].description;
                 document.getElementById('current-icon').src = `${iconBaseUrl}${mapOwmIconToSvg(currentIconCode)}.svg`;
                 
-                updateBackground(current.weather[0].main);
+                // --- THIS IS THE UPDATED CALL ---
+                // Now we call the Unsplash API function
+                updateBackgroundFromApi(weatherMain);
 
                 // --- 2. Update Hourly Forecast ---
                 const forecast1 = data.list[1]; 
@@ -241,20 +253,15 @@
                 }
 
             } catch (error) {
-                // --- UPDATED CATCH BLOCK ---
                 setErrorState();
             }
         }
         
-        // --- NEW: Add a listener in case the icons fail to load ---
         document.addEventListener('DOMContentLoaded', () => {
             fetchWeather();
             
-            // Add error listeners to all images
             document.querySelectorAll('img').forEach(img => {
                 img.addEventListener('error', () => {
-                    // If an icon fails to load, replace it with the default
-                    console.warn(`Failed to load image: ${img.src}. Replacing with default.`);
                     img.src = iconBaseUrl + defaultIcon;
                 });
             });

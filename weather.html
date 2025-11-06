@@ -4,24 +4,22 @@
     <meta charset="UTF-R">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Dynamic Weather Widget</title>
-    
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/moment.js/2.19.1/moment.min.js" integrity="sha512-Dz4zO7p6MrF+VcOD6PUbA08hK1rv0hDv/wGuxSUjImaUYxRyK2gLC6eQWVqyDN9IM1X/kUA8zkykJS/gEVOd3w==" crossorigin="anonymous" referrerpolicy="no-referrer"></script>
+    <script src="https://code.jquery.com/jquery-3.7.1.slim.min.js" integrity="sha256-kmHvs0B+OpCW5GVHUNjv9rOmY0IvSIRcf7zGUDTDQM8=" crossorigin="anonymous"></script>
     <style>
         body {
             font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
-            background-color: #f0f0f0; 
+            background-color: #000; 
             display: grid;
-            place-items: center;
-            min-height: 100vh;
+            margin:0;
         }
 
         .weather-widget {
-            /* --- DEFAULT BACKGROUND SET HERE --- */
             background: linear-gradient(rgba(0,0,0,0.3), rgba(0,0,0,0.3)), url('https://images.unsplash.com/photo-1534088563585-c3E806f153d8?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=MnwzODU4MjZ8MHwxfHJhbmRvbXx8fHx8fHx8fDE2NzM0MjYxNTE&ixlib=rb-4.0.3&q=80&w=400') no-repeat center center / cover; 
-            /* I've used a static default Unsplash image URL just in case */
             color: white;
             padding: 20px;
-            border-radius: 12px;
-            width: 250px;
+            border-radius: 0px;
+            width: 240px;
             box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
             transition: background-image 0.5s ease-in-out;
         }
@@ -85,9 +83,14 @@
     </style>
 </head>
 <body>
-
+    
+    <div class="time-date">
+       	<div id="day" class="caption dayText"></div>
+    	<div id="date" class="caption dateText"></div>
+	    <div id="time" class="caption timeText"></div>
+    </div>
+    
     <div class="weather-widget">
-        
         <div class="current-weather">
             <div class="current-temp" id="current-temp">--°</div>
             <div class="current-conditions">
@@ -95,7 +98,6 @@
                 <div class="current-description" id="current-description">Loading...</div>
             </div>
         </div>
-        
         <div class="forecast">
             <div class="forecast-item">
                 <div class="forecast-time" id="forecast-time-1">--:-- --</div>
@@ -108,30 +110,38 @@
                 <div class="forecast-temp" id="forecast-temp-2">--°</div>
             </div>
         </div>
-
     </div>
 
+    <div id="next-day-off">
+        <h3>SCHOOL CLOSED 11/11</h3>
+        <h3>Veteran's Day</h3>
+    </div>
+
+    <div id="news-widget">
+        <header>
+            <h2>New York Times Headlines</h2>
+        </header>
+        
+        <div id="carousel-content">
+            <div id="loading-message" class="loading">
+                Loading news...
+            </div>
+            </div>
+        <div id="carousel-nav" style="display: flex;">
+            <button id="prev-btn">← Previous</button>
+            <span id="slide-indicator">1 / 7</span>
+            <button id="next-btn">Next →</button>
+        </div>
+       
+    </div>
+
+
     <script>
-        // ------------------------------------------------------------------
-        // --- CONFIGURATION: YOU NOW NEED TWO API KEYS ---
-        // ------------------------------------------------------------------
-
-        // 1. Get your free weather API key from https://openweathermap.org/appid
         const weatherApiKey = 'cc89b86463a5016e19b544c61d9a9117'; 
-
-        // 2. *** NEW *** Get your Unsplash Access Key from https://unsplash.com/developers
         const unsplashApiKey = 'VQZFbs5zX4fJECBRq2VN0R9TgBMPOrM7r6d2ZH0qmEs';
-
-        // 3. Set your city
         const city = 'New York'; 
-
-        // ------------------------------------------------------------------
-
-        // Base URL for animated icons
         const iconBaseUrl = 'https://bmcdn.nl/assets/weather-icons/v3.0/fill/svg/';
         const defaultIcon = 'cloudy.svg';
-
-        // Mapping for search terms
         const weatherBackgrounds = {
             'clear': 'clear sky', 'clouds': 'cloudy sky', 'rain': 'rainy weather',
             'drizzle': 'drizzle rain', 'thunderstorm': 'thunderstorm lightning',
@@ -139,6 +149,10 @@
             'default': 'weather background'
         };
 
+	var setCaptions; setCaptions = function() { var hour, now, minute; now = new Date(); hour = now.getHours(); minute = now.getMinutes(); return $('#time').text(moment().format('h:mm a')); };
+	$('#day').text(moment().format('dddd')); $('#date').text(moment().format('MMMM D'));
+	setCaptions(); setInterval(function() { return setCaptions(); }, 10 * 1000);
+        
         function mapOwmIconToSvg(iconCode) {
             const iconMap = {
                 '01d': 'clear-day', '01n': 'clear-night',
@@ -162,10 +176,6 @@
             hours = hours ? hours : 12; 
             return `${hours} ${ampm}`;
         }
-
-        /**
-         * --- NEW: Function to update background using the Unsplash API ---
-         */
         async function updateBackgroundFromApi(weatherMain) {
             if (unsplashApiKey === 'YOUR_UNSPLASH_ACCESS_KEY_HERE') {
                 console.warn('Unsplash API key not set. Using default background.');
@@ -266,6 +276,177 @@
                 });
             });
         });
+    </script>
+<script>
+        const NYT_API_KEY = "fA2AACnKOZWVnU8C0kcCLkivelqlxDQc";
+        const NYT_SECTION = "home"; 
+        const ARTICLE_COUNT = 7;
+        // --- END CONFIGURATION ---
+
+        // Global variables
+        let articlesData = [];
+        let currentIndex = 0;
+
+        // DOM Elements
+        const carouselContent = document.getElementById('carousel-content');
+        const loadingMessage = document.getElementById('loading-message');
+        const navContainer = document.getElementById('carousel-nav');
+        const prevBtn = document.getElementById('prev-btn');
+        const nextBtn = document.getElementById('next-btn');
+        const slideIndicator = document.getElementById('slide-indicator');
+
+        const apiUrl = `https://api.nytimes.com/svc/topstories/v2/${NYT_SECTION}.json?api-key=${NYT_API_KEY}`;
+
+        const apiKey = 'cc89b86463a5016e19b544c61d9a9117'; 
+
+        // 2. Set your city
+        const city = 'New York'; 
+
+        async function fetchWeather() {
+            const apiUrl = `https://api.openweathermap.org/data/2.5/forecast?q=${city}&appid=${apiKey}&units=imperial`; // Use 'metric' for Celsius
+            try {
+                const response = await fetch(apiUrl);
+                if (!response.ok) {
+                    throw new Error(`HTTP error! status: ${response.status}`);
+                }
+                const data = await response.json();
+                const current = data.list[0];
+                document.getElementById('current-temperature').textContent = `${Math.round(current.main.temp)}°`;
+                document.getElementById('current-description').textContent = current.weather[0].description;
+                document.getElementById('current-icon').src = `https://openweathermap.org/img/wn/${current.weather[0].icon}@2x.png`;
+
+                // --- 2. Update Hourly Forecast ---
+                
+                // Find the forecast for 1:00 PM (13:00)
+                const forecast1PM = data.list.find(item => {
+                    const forecastTime = new Date(item.dt * 1000);
+                    return forecastTime.getHours() === 13;
+                });
+
+                // Find the forecast for 4:00 PM (16:00)
+                const forecast4PM = data.list.find(item => {
+                    const forecastTime = new Date(item.dt * 1000);
+                    return forecastTime.getHours() === 16;
+                // Update the 4:00 PM forecast block
+                if (forecast4PM) {
+                    document.getElementById('forecast-temp-2').textContent = `${Math.round(forecast4PM.main.temp)}°`;
+                    document.getElementById('forecast-icon-2').src = `https://openweathermap.org/img/wn/${forecast4PM.weather[0].icon}@2x.png`;
+                } else {
+                    document.getElementById('forecast-temp-2').textContent = 'N/A';
+                }
+
+            catch (error) {
+                console.error('Error fetching weather data:', error);
+                document.getElementById('current-description').textContent = 'Error';
+            }
+        }
+
+        // Run the function when the page loads
+        document.addEventListener('DOMContentLoaded', fetchWeather);
+		
+		
+		function renderArticle(index) {
+            if (articlesData.length === 0) return;
+
+            const article = articlesData[index];
+            
+            // 1. Find a valid image
+            let imageUrl = "";
+            let imageAlt = "Article image";
+            if (article.multimedia && article.multimedia.length > 0) {
+                const image = article.multimedia[2] || article.multimedia[0];
+                imageUrl = image.url;
+                imageAlt = image.caption || article.title;
+            }
+
+            // 2. Define the unique ID for the QR code container
+            // This ID can be static since we rebuild the HTML each time
+            const qrCodeId = 'article-qr-code-placeholder';
+
+            // 3. Set the carousel's inner HTML
+            carouselContent.innerHTML = `
+                <div class="article-card">
+                    <div class="article-content">                       
+                        ${imageUrl ? `<img src="${imageUrl}" alt="${imageAlt}" class="article-image">` : ''}
+						<h3>
+                            <a href="${article.url}" target="_blank" rel="noopener noreferrer">
+                                ${article.title}
+                            </a>
+                        </h3>
+						<p>${article.abstract}</p>
+                    </div>
+                    <div class="article-qrcode" id="${qrCodeId}"></div>
+                </div>
+            `;
+
+            // 4. Generate the QR code *after* the element is in the DOM
+            new QRCode(document.getElementById(qrCodeId), {
+                text: article.url,
+                width: 90,
+                height: 90,
+                colorDark : "#000000",
+                colorLight : "#ffffff",
+                correctLevel : QRCode.CorrectLevel.M
+            });
+
+            // 5. Update the slide indicator
+            slideIndicator.textContent = `${index + 1} / ${articlesData.length}`;
+        }
+
+        /**
+         * Fetches news from the NYT API
+         */
+        async function fetchNews() {
+            try {
+                const response = await fetch(apiUrl);
+                if (!response.ok) {
+                    if (response.status === 401 || response.status === 403) {
+                        throw new Error("API Key error. Make sure your key is correct.");
+                    }
+                    throw new Error(`Network error: ${response.statusText}`);
+                }
+                const data = await response.json();
+
+                // Filter out articles that are missing key info
+                articlesData = data.results
+                    .filter(a => a.title && a.url && a.abstract)
+                    .slice(0, ARTICLE_COUNT);
+
+                if (articlesData.length === 0) {
+                     throw new Error("No valid articles found.");
+                }
+
+                // Hide loading and show nav
+                loadingMessage.style.display = 'none';
+                navContainer.style.display = 'flex';
+
+                // Render the first article
+                currentIndex = 0;
+                renderArticle(currentIndex);
+
+            } catch (error) {
+                console.error("Failed to fetch news:", error);
+                loadingMessage.textContent = `Failed to load news. ${error.message}`;
+                loadingMessage.className = 'error';
+            }
+        }
+
+        // --- EVENT LISTENERS ---
+
+        nextBtn.onclick = function() {
+            // Move to the next index, looping back to 0 at the end
+            currentIndex = (currentIndex + 1) % articlesData.length;
+            renderArticle(currentIndex);
+        };
+
+        prevBtn.onclick = function() {
+            // Move to the previous index, looping to the end if at 0
+            currentIndex = (currentIndex - 1 + articlesData.length) % articlesData.length;
+            renderArticle(currentIndex);
+        };
+
+        // Run the fetch function when the page loads
+        document.addEventListener('DOMContentLoaded', fetchNews);
     </script>
 
 </body>

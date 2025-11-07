@@ -48,13 +48,13 @@
   }
 
   .current-conditions {
-    text-align: right;
+    text-align: center;
 	      padding: 0px 41px 0 0;
   }
 
   .current-icon {
-    width: 60px;
-    height: 60px;
+    width: 80px;
+    height: 80px;
   }
 
   .current-description {
@@ -113,14 +113,7 @@
             margin: 0;
             font-size: 20px;
         }
-
-        /* This container holds the single, changing article */
-        #carousel-content {
-            padding: 20px;
-            /* Set a consistent height */
-            min-height: 250px;
-        }
-        
+        #carousel-content { padding: 0  !important; }
         /* Styles for the article card itself */
         .article-card {
             display: flex;
@@ -129,10 +122,10 @@
         }
 
         .article-image {
-            width: 120px;
-            height: 120px;
+            width: 240px;
+            height: 200px;
             object-fit: cover;
-            border-radius: 6px;
+            border-radius: 0px;
             flex-shrink: 0;
         }
 
@@ -271,8 +264,6 @@
         <p>Veteran's Day</p>
     </div>
     <div id="news-widget">
-        <header>
-        </header>
         <div id="carousel-content">
             <div id="loading-message" class="loading">
                 Loading news...

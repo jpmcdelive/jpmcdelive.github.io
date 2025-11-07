@@ -269,7 +269,7 @@
                 Loading news...
             </div>
             </div>
-        <div id="carousel-nav" style="display: flex;">
+        <div id="carousel-nav" style="display: none;">
             <button id="prev-btn">← Previous</button>
             <span id="slide-indicator">1 / 7</span>
             <button id="next-btn">Next →</button>
@@ -472,16 +472,11 @@
             carouselContent.innerHTML = `
                 <div class="article-card">
                     <div class="article-content">
-                        <h3>
-                            <a href="${article.url}" target="_blank" rel="noopener noreferrer">
-                                ${article.title}
-                            </a>
-                        </h3>
-                        <p>${article.abstract}</p>
-                        
                         ${imageUrl ? `<img src="${imageUrl}" alt="${imageAlt}" class="article-image">` : ''}
+                    	<h3>${article.title}</h3>
+                        <p>${article.abstract}</p>
+                        <div class="article-qrcode" id="${qrCodeId}"></div>
                     </div>
-                    <div class="article-qrcode" id="${qrCodeId}"></div>
                 </div>
             `;
 

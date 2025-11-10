@@ -7,8 +7,7 @@
     <script src="https://cdnjs.cloudflare.com/ajax/libs/moment.js/2.19.1/moment.min.js" integrity="sha512-Dz4zO7p6MrF+VcOD6PUbA08hK1rv0hDv/wGuxSUjImaUYxRyK2gLC6eQWVqyDN9IM1X/kUA8zkykJS/gEVOd3w==" crossorigin="anonymous" referrerpolicy="no-referrer"></script>
     <script src="https://code.jquery.com/jquery-3.7.1.slim.min.js" integrity="sha256-kmHvs0B+OpCW5GVHUNjv9rOmY0IvSIRcf7zGUDTDQM8=" crossorigin="anonymous"></script>
 	<script src="https://cdn.jsdelivr.net/npm/qrcodejs@1.0.0/qrcode.min.js"></script>
-	<link rel="preconnect" href="https://fonts.googleapis.com">
-	<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+
 	<link href="https://fonts.googleapis.com/css2?family=Fira+Sans:ital,wght@0,100;0,400;0,600;0,900;1,400;1,600;1,900&display=swap" rel="stylesheet">
   	<style>
   /* --- Global Styles --- */
@@ -286,16 +285,12 @@
         const city = 'New York'; 
         const iconBaseUrl = 'https://bmcdn.nl/assets/weather-icons/v3.0/fill/svg/';
         const defaultIcon = 'cloudy.svg';
-        const weatherBackgrounds = {
-            'clear': 'clear sky', 'clouds': 'cloudy sky', 'rain': 'rainy weather',
-            'drizzle': 'drizzle rain', 'thunderstorm': 'thunderstorm lightning',
-            'snow': 'snowy landscape', 'mist': 'mist fog', 'fog': 'foggy forest',
-            'default': 'weather background' };
+        const weatherBackgrounds = { 'clear': 'clear sky', 'clouds': 'cloudy sky', 'rain': 'rainy weather', 'drizzle': 'drizzle rain', 'thunderstorm': 'thunderstorm lightning', 'snow': 'snowy landscape', 'mist': 'mist fog', 'fog': 'foggy forest', 'default': 'weather background' };
 
-	/* TIME & DATE
+	// TIME & DATE
 		var setCaptions; setCaptions = function() { var hour, now, minute; now = new Date(); hour = now.getHours(); minute = now.getMinutes(); return $('#time').text(moment().format('h:mm a')); };
 		$('#day').text(moment().format('dddd')); $('#date').text(moment().format('MMMM D')); setCaptions(); setInterval(function() { return setCaptions(); }, 10 * 1000);
-*/
+		
 	// WEATHER
         function mapOwmIconToSvg(iconCode) {
             const iconMap = {

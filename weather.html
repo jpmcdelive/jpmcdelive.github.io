@@ -103,6 +103,7 @@
             overflow: hidden;
 		  padding-bottom: 10px; 	
 		  margin-bottom: 3px; 
+		  min-height: 410px; 
         }
 
         header {
@@ -422,7 +423,7 @@
         });
     </script>
  
- <script>
+ <script>/*
         // --- CONFIGURATION ---
         // ⚠️ PASTE YOUR NYT API KEY HERE
         const NYT_API_KEY = "fA2AACnKOZWVnU8C0kcCLkivelqlxDQc";
@@ -446,10 +447,6 @@
 
         // --- FUNCTIONS ---
 
-        /**
-         * Renders a single article card into the carousel content area.
-         * @param {number} index - The index of the article to render from articlesData.
-         */
         function renderArticle(index) {
             if (articlesData.length === 0) return;
 
@@ -491,9 +488,6 @@
             });
         }
 
-        /**
-         * Fetches news from the NYT API
-         */
         async function fetchNews() {
             try {
                 const response = await fetch(apiUrl);

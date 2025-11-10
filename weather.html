@@ -1,22 +1,248 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-    <meta charset="UTF-R"><meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta charset="UTF-R">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>P2Gm Signs</title>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/moment.js/2.19.1/moment.min.js" integrity="sha512-Dz4zO7p6MrF+VcOD6PUbA08hK1rv0hDv/wGuxSUjImaUYxRyK2gLC6eQWVqyDN9IM1X/kUA8zkykJS/gEVOd3w==" crossorigin="anonymous" referrerpolicy="no-referrer"></script>
     <script src="https://code.jquery.com/jquery-3.7.1.slim.min.js" integrity="sha256-kmHvs0B+OpCW5GVHUNjv9rOmY0IvSIRcf7zGUDTDQM8=" crossorigin="anonymous"></script>
 	<script src="https://cdn.jsdelivr.net/npm/qrcodejs@1.0.0/qrcode.min.js"></script>
-	<link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+	<link rel="preconnect" href="https://fonts.googleapis.com">
+	<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 	<link href="https://fonts.googleapis.com/css2?family=Fira+Sans:ital,wght@0,100;0,400;0,600;0,900;1,400;1,600;1,900&display=swap" rel="stylesheet">
+  	<style>
+  /* --- Global Styles --- */
+  body {
+    font-family: "Fira Sans", sans-serif;
+  	font-weight: 400;
+  	font-style: normal;
+    background-color: #000;
+    color: #fff;
+    margin: 0;
+	width: 240px;
+  }
 
-	<style><style>body{font-family:"Fira Sans",sans-serif;font-weight:400;font-style:normal;background-color:#000;color:#fff;margin:0;width:240px}.weather-widget{background:linear-gradient(rgba(0,0,0,.3),rgba(0,0,0,.3)),url('https://images.unsplash.com/photo-1534088563585-c3E806f153d8?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=MnwzODU4MjZ8MHwxfHJhbmRvbXx8fHx8fHx8fDE2NzM0MjYxNTE&ixlib=rb-4.0.3&q=80&w=400') no-repeat center center/cover;color:white;border-radius:0;width:240px;box-shadow:0 4px 12px rgba(0,0,0,.1);transition:background-image .5s ease-in-out}.current-weather{display:flex;width:240px;margin-bottom:15px}.current-temp{font-size:3.5rem;font-weight:600;line-height:1;padding:10px 0 0 30px}.current-conditions{text-align:center;padding:0 41px 0 0}.current-icon{width:80px;height:80px}.current-description{font-size:.9rem;margin-top:-5px;text-transform:capitalize}.forecast{display:flex;justify-content:space-between;padding:0 50px 15px}.forecast-item{display:flex;flex-direction:column;align-items:center;font-size:.9rem;padding:0 20px}.forecast-time{font-weight:500;margin-bottom:0}.forecast-icon{width:40px;height:40px}.forecast-temp{font-size:1.1rem;font-weight:500;margin-top:0}#news-widget{width:240px;background-color:#fff;border-radius:0;min-height=410px;}</style>
+  /* --- Weather Widget Container --- */
+  .weather-widget {
+    background: linear-gradient(rgba(0, 0, 0, 0.3), rgba(0, 0, 0, 0.3)), 
+                url('https://images.unsplash.com/photo-1534088563585-c3E806f153d8?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=MnwzODU4MjZ8MHwxfHJhbmRvbXx8fHx8fHx8fDE2NzM0MjYxNTE&ixlib=rb-4.0.3&q=80&w=400') no-repeat center center / cover;
+    color: white;
+    border-radius: 0;
+    width: 240px;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+    transition: background-image .5s ease-in-out;
+  }
+
+  /* --- Current Weather Section --- */
+  .current-weather {
+    display: flex;
+    width: 240px;
+	  margin-bottom: 15px; 
+  }
+
+  .current-temp {
+    font-size: 3.5rem;
+    font-weight: 600;
+    line-height: 1; 
+	  padding: 10px 0 0 30px;
+  }
+
+  .current-conditions {
+    text-align: center;
+	      padding: 0px 41px 0 0;
+  }
+
+  .current-icon {
+    width: 80px;
+    height: 80px;
+  }
+
+  .current-description {
+    font-size: .9rem;
+    margin-top: -5px;
+    text-transform: capitalize;
+  }
+
+  /* --- Forecast Section --- */
+  .forecast {
+    display: flex;
+    justify-content: space-between;
+    padding: 0 50px 15px;
+  }
+
+  .forecast-item {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    font-size: .9rem;
+	  padding: 0 20px; 
+  }
+
+  .forecast-time {
+    font-weight: 500;
+    margin-bottom: 0px;
+  }
+
+  .forecast-icon {
+    width: 40px;
+    height: 40px;
+  }
+
+  .forecast-temp {
+    font-size: 1.1rem;
+    font-weight: 500;
+    margin-top: 0px;
+  }
+</style>
+	<style>
+	  #news-widget {
+            width: 240px;
+            background-color: #ffffff;
+            border-radius: 0px;
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05);
+            overflow: hidden;
+		  padding-bottom: 10px; 	
+		  margin-bottom: 3px; 
+        }
+
+        header {
+            padding: 16px 20px;
+            border-bottom: 1px solid #eee;
+            background-color: #fafafa;
+        }
+
+        header h2 {
+            margin: 0;
+            font-size: 20px;
+        }
+        #carousel-content { padding: 0  !important; }
+        /* Styles for the article card itself */
+        .article-card {
+            display: flex;
+            gap: 15px;
+            animation: fadeIn 0.4s ease-out;
+        }
+
+        .article-image {
+            width: 240px;
+            height: 160px;
+            object-fit: cover;
+            border-radius: 0px;
+            flex-shrink: 0;
+        }
+
+        .article-content {
+            flex-grow: 1;
+            min-width: 0; /* Fix for flexbox overflow */
+        }
+
+        .article-content h3 {
+            margin: 0 0 5px 0;
+            font-size: 18px;
+			color: black;
+			padding: 0 8px; 
+			font-weight: 600;
+        }
+
+        .article-content a {
+            text-decoration: none;
+            color: #121212;
+        }
+
+        .article-content a:hover {
+            text-decoration: underline;
+        }
+
+        .article-content p {
+            margin: 0 0 8px 0;
+			padding: 0 8px;
+            font-size: 14px;
+            color: #555;
+            display: -webkit-box;
+            -webkit-line-clamp: 4;
+            -webkit-box-orient: vertical;
+            overflow: hidden;
+        }
+
+        /* QR Code is now part of the main content */
+        .article-qrcode {
+            width: 90px;
+            height: 90px;
+            flex-shrink: 0;
+        }
+        
+        .article-qrcode canvas,
+        .article-qrcode img {
+            padding: 4px 5px 25px 7px;
+            background: #fff;
+            box-shadow: 0 1px 3px rgba(0,0,0,0.1);
+        }
+
+        /* Navigation styles */
+        #carousel-nav {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 10px 20px;
+            border-top: 1px solid #eee;
+            background-color: #fafafa;
+        }
+
+        #carousel-nav button {
+            background-color: #007aff;
+            color: white;
+            border: none;
+            padding: 8px 14px;
+            border-radius: 5px;
+            font-size: 14px;
+            font-weight: 500;
+            cursor: pointer;
+        }
+		.time-date {text-align: center; BACKGROUND: #333; margin: 3px 0; padding-bottom: 10px;}
+		#day {font-size: 2.5em; font-weight: 100; }
+		#date {font-size: 1.2em; font-weight: 400; line-height: .7; }
+		#time {font-size: 3.5em; line-height: 1; font-weight: 900; }
+		#next-day-off { background: #444; margin: 3px 0; text-align: center; padding: 7px 0; }
+		#next-day-off h3 { margin-bottom: 0px; margin-top: 4px; }
+        #next-day-off p { margin: 0;  }
+	
+        #carousel-nav button:hover {
+            background-color: #0056b3;
+        }
+        
+        #carousel-nav button:disabled {
+            background-color: #ccc;
+            cursor: not-allowed;
+        }
+
+        #slide-indicator {
+            font-size: 14px;
+            color: #555;
+            font-weight: 500;
+        }
+
+        .loading, .error {
+            text-align: center;
+            padding: 40px;
+            font-size: 16px;
+            color: #777;
+        }
+        
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(0px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+</style>
+
 </head>
 <body>
+    
     <div class="time-date">
        	<div id="day" class="caption dayText"></div>
     	<div id="date" class="caption dateText"></div>
 	    <div id="time" class="caption timeText"></div>
     </div>
+    
     <div class="weather-widget">
         <div class="current-weather">
             <div class="current-temp" id="current-temp">--°</div>
@@ -38,6 +264,7 @@
             </div>
         </div>
     </div>
+
     <div id="next-day-off">
         <h3>SCHOOL CLOSED 11/11</h3>
         <p>Veteran's Day</p>
@@ -49,7 +276,9 @@
             </div>
             </div>
    </div>
-   <script>
+
+
+    <script>
 	// VARIABLES
         const weatherApiKey = 'cc89b86463a5016e19b544c61d9a9117'; 
         const unsplashApiKey = 'VQZFbs5zX4fJECBRq2VN0R9TgBMPOrM7r6d2ZH0qmEs';

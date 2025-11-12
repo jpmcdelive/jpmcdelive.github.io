@@ -5,8 +5,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>P2Gm Signs</title>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/moment.js/2.19.1/moment.min.js" integrity="sha512-Dz4zO7p6MrF+VcOD6PUbA08hK1rv0hDv/wGuxSUjImaUYxRyK2gLC6eQWVqyDN9IM1X/kUA8zkykJS/gEVOd3w==" crossorigin="anonymous" referrerpolicy="no-referrer"></script>
-    <script src="https://code.jquery.com/jquery-3.7.1.slim.min.js" integrity="sha256-kmHvs0B+OpCW5GVHUNjv9rOmY0IvSIRcf7zGUDTDQM8=" crossorigin="anonymous"></script>
-	<script src="https://cdn.jsdelivr.net/npm/qrcodejs@1.0.0/qrcode.min.js"></script>
+    <script src="https://code.jquery.com/jquery-3.7.1.slim.min.js" integrity="sha256-kmHvs0B+OpCW5GVHUNjv9rOmY0IvSIRcf7zGUDTDQM8=" crossorigin="anonymous"></script><script src="https://cdn.jsdelivr.net/npm/qrcodejs@1.0.0/qrcode.min.js"></script>
 	<link href="https://fonts.googleapis.com/css2?family=Fira+Sans:ital,wght@0,100;0,400;0,600;0,900;1,400;1,600;1,900&display=swap" rel="stylesheet">
   	<style>
   /* --- Global Styles --- */
@@ -306,57 +305,19 @@
 
         function formatTime(timestamp) { const date = new Date(timestamp * 1000); let hours = date.getHours(); const ampm = hours >= 12 ? 'pm' : 'am'; hours = hours % 12; hours = hours ? hours : 12;  return `${hours} ${ampm}`; }
         async function updateBackgroundFromApi(weatherMain) { if (unsplashApiKey === 'YOUR_UNSPLASH_ACCESS_KEY_HERE') { console.warn('Unsplash API key not set. Using default background.'); return; }
-
             const searchTerm = weatherBackgrounds[weatherMain.toLowerCase()] || weatherBackgrounds['default'];
             const unsplashApiUrl = `https://api.unsplash.com/photos/random?query=${searchTerm}&client_id=${unsplashApiKey}&orientation=portrait`;
             const widget = document.querySelector('.weather-widget');
+            try { const response = await fetch(unsplashApiUrl); if (!response.ok) { throw new Error(`Unsplash API error! status: ${response.status}`); } const data = await response.json(); const imageUrl = data.urls.regular; widget.style.backgroundImage = `linear-gradient(rgba(0,0,0,0.3), rgba(0,0,0,0.3)), url('${imageUrl}')`; } catch (error) { console.error('Error fetching Unsplash background:', error); } }    
 
-            try {
-                const response = await fetch(unsplashApiUrl);
-                if (!response.ok) {
-                    throw new Error(`Unsplash API error! status: ${response.status}`);
-                }
-                const data = await response.json();
-                
-                // Get the image URL. 'regular' is a good size.
-                const imageUrl = data.urls.regular; 
-                
-                // Set the new background
-                widget.style.backgroundImage = `linear-gradient(rgba(0,0,0,0.3), rgba(0,0,0,0.3)), url('${imageUrl}')`;
-
-            } catch (error) {
-                console.error('Error fetching Unsplash background:', error);
-                // On error, the default background from the CSS will remain.
-            }
-        }
-        
-        function setErrorState() {
-            console.error('Error fetching weather data. Setting default state.');
-            
-            document.getElementById('current-description').textContent = 'Failed to load';
-            document.getElementById('current-temp').textContent = '--°';
-            document.getElementById('current-icon').src = iconBaseUrl + defaultIcon;
-            document.getElementById('forecast-icon-1').src = iconBaseUrl + defaultIcon;
-            document.getElementById('forecast-icon-2').src = iconBaseUrl + defaultIcon;
-        }
+		function setErrorState() { console.error('Error fetching weather data. Setting default state.'); document.getElementById('current-description').textContent = 'Failed to load'; document.getElementById('current-temp').textContent = '--°'; document.getElementById('current-icon').src = iconBaseUrl + defaultIcon; document.getElementById('forecast-icon-1').src = iconBaseUrl + defaultIcon; document.getElementById('forecast-icon-2').src = iconBaseUrl + defaultIcon; }
 
         async function fetchWeather() {
-            if (weatherApiKey === 'YOUR_OPENWEATHERMAP_API_KEY_HERE') {
-                setErrorState();
-                console.error('Weather API key is placeholder. Please replace it.');
-                document.getElementById('current-description').textContent = 'Set API Key';
-                return;
-            }
-
+            if (weatherApiKey === 'YOUR_OPENWEATHERMAP_API_KEY_HERE') { setErrorState(); console.error('Weather API key is placeholder. Please replace it.'); document.getElementById('current-description').textContent = 'Set API Key'; return; }
             const apiUrl = `https://api.openweathermap.org/data/2.5/forecast?q=${city}&appid=${weatherApiKey}&units=imperial`;
+            try { const response = await fetch(apiUrl); if (!response.ok) throw new Error(`HTTP error! status: ${response.status}`); const data = await response.json(); console.log(data);
 
-            try {
-                const response = await fetch(apiUrl);
-                if (!response.ok) throw new Error(`HTTP error! status: ${response.status}`);
-                const data = await response.json(); console.log(data);
-
-                // --- 1. Update Current Weather ---
-                const current = data.list[0]; 
+				const current = data.list[0]; 
                 const currentIconCode = current.weather[0].icon;
                 const weatherMain = current.weather[0].main;
                 
@@ -366,27 +327,21 @@
                 
                 updateBackgroundFromApi(weatherMain);
 
-				const forecast1145 = data.list.find(item => { const forecastTime = new Date(item.dt * 1000); return forecastTime.getHours() === 12; });
-	            const forecast250 = data.list.find(item => { const forecastTime = new Date(item.dt * 1000); return forecastTime.getHours() === 15; });
+            const forecast1145 = data.list.find(item => { const forecastTime = new Date(item.dt * 1000); return forecastTime.getHours() === 12; });
+            const forecast250 = data.list.find(item => { const forecastTime = new Date(item.dt * 1000); return forecastTime.getHours() === 15; });
 
-				document.getElementById('forecast-time-1').textContent = 'Lunch'; 
-                if (forecast1145) { const forecast1IconCode = forecast1145.weather[0].icon;
-                    document.getElementById('forecast-temp-1').textContent = `${Math.round(forecast1145.main.temp)}°`;
-                    document.getElementById('forecast-icon-1').src = `${iconBaseUrl}${mapOwmIconToSvg(forecast1IconCode)}.svg`;  }
+			document.getElementById('forecast-time-1').textContent = 'Lunch';
+			if (forecast1145) { const forecast1IconCode = forecast1145.weather[0].icon; document.getElementById('forecast-temp-1').textContent = `${Math.round(forecast1145.main.temp)}°`; document.getElementById('forecast-icon-1').src = `${iconBaseUrl}${mapOwmIconToSvg(forecast1IconCode)}.svg`; } 
+				else { document.getElementById('forecast-temp-1').textContent = '--°'; document.getElementById('forecast-icon-1').src = iconBaseUrl + defaultIcon; }
 
-				document.getElementById('forecast-time-2').textContent = 'Dismissal'; 
-                if (forecast250) { const forecast2IconCode = forecast250.weather[0].icon;
-                    document.getElementById('forecast-temp-2').textContent = `${Math.round(forecast250.main.temp)}°`;
-                    document.getElementById('forecast-icon-2').src = `${iconBaseUrl}${mapOwmIconToSvg(forecast2IconCode)}.svg`;  }
+			document.getElementById('forecast-time-2').textContent = '2:50pm'; // Set static label
+            if (forecast250) { const forecast2IconCode = forecast250.weather[0].icon; document.getElementById('forecast-temp-2').textContent = `${Math.round(forecast250.main.temp)}°`; document.getElementById('forecast-icon-2').src = `${iconBaseUrl}${mapOwmIconToSvg(forecast2IconCode)}.svg`;  } 
+				else { document.getElementById('forecast-temp-2').textContent = '--°'; document.getElementById('forecast-icon-2').src = iconBaseUrl + defaultIcon; }
 
-            } catch (error) {
-                setErrorState();
-            }
+            } catch (error) { setErrorState(); }
         }
         
-        document.addEventListener('DOMContentLoaded', () => {
-            fetchWeather();
-            
+        document.addEventListener('DOMContentLoaded', () => { fetchWeather();
             document.querySelectorAll('img').forEach(img => {
                 img.addEventListener('error', () => {
                     img.src = iconBaseUrl + defaultIcon;

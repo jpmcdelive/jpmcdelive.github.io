@@ -383,7 +383,7 @@
             const forecast250 = data.list.find(item => getLocalHour(item.dt) === 16);
 
             // --- Update the first forecast block ---
-            document.getElementById('forecast-time-1').textContent = '11:45am'; // Set static label
+            document.getElementById('forecast-time-1').textContent = 'Lunch'; // Set static label
             if (forecast1145) {
                 const forecast1IconCode = forecast1145.weather[0].icon;
                 document.getElementById('forecast-temp-1').textContent = `${Math.round(forecast1145.main.temp)}°`;
@@ -395,7 +395,7 @@
             }
 
             // --- Update the second forecast block ---
-            document.getElementById('forecast-time-2').textContent = '2:50pm'; // Set static label
+            document.getElementById('forecast-time-2').textContent = 'Dismissal'; // Set static label
             if (forecast250) {
                 const forecast2IconCode = forecast250.weather[0].icon;
                 document.getElementById('forecast-temp-2').textContent = `${Math.round(forecast250.main.temp)}°`;

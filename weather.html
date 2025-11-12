@@ -278,15 +278,13 @@
 
 
     <script>
-	// VARIABLES
-        const weatherApiKey = 'cc89b86463a5016e19b544c61d9a9117'; 
+        const weatherApiKey = '3705bab40a0bc21845733bbd24c752ba'; 
         const unsplashApiKey = 'VQZFbs5zX4fJECBRq2VN0R9TgBMPOrM7r6d2ZH0qmEs';
         const city = 'New York'; 
         const iconBaseUrl = 'https://bmcdn.nl/assets/weather-icons/v3.0/fill/svg/';
         const defaultIcon = 'cloudy.svg';
         const weatherBackgrounds = { 'clear': 'clear sky', 'clouds': 'cloudy sky', 'rain': 'rainy weather', 'drizzle': 'drizzle rain', 'thunderstorm': 'thunderstorm lightning', 'snow': 'snowy landscape', 'mist': 'mist fog', 'fog': 'foggy forest', 'default': 'weather background' };
 
-	// TIME & DATE
 		var setCaptions; setCaptions = function() { var hour, now, minute; now = new Date(); hour = now.getHours(); minute = now.getMinutes(); return $('#time').text(moment().format('h:mm a')); };
 		$('#day').text(moment().format('dddd')); $('#date').text(moment().format('MMMM Do, YYYY')); setCaptions(); setInterval(function() { return setCaptions(); }, 10 * 1000);
 		
@@ -306,23 +304,11 @@
             return iconMap[iconCode] || 'cloudy';
         }
 
-        function formatTime(timestamp) {
-            const date = new Date(timestamp * 1000);
-            let hours = date.getHours();
-            const ampm = hours >= 12 ? 'pm' : 'am';
-            hours = hours % 12;
-            hours = hours ? hours : 12; 
-            return `${hours} ${ampm}`;
-        }
-        async function updateBackgroundFromApi(weatherMain) {
-            if (unsplashApiKey === 'YOUR_UNSPLASH_ACCESS_KEY_HERE') {
-                console.warn('Unsplash API key not set. Using default background.');
-                return; // Exit if the Unsplash key is not set
-            }
+        function formatTime(timestamp) { const date = new Date(timestamp * 1000); let hours = date.getHours(); const ampm = hours >= 12 ? 'pm' : 'am'; hours = hours % 12; hours = hours ? hours : 12;  return `${hours} ${ampm}`; }
+        async function updateBackgroundFromApi(weatherMain) { if (unsplashApiKey === 'YOUR_UNSPLASH_ACCESS_KEY_HERE') { console.warn('Unsplash API key not set. Using default background.'); return; }
 
             const searchTerm = weatherBackgrounds[weatherMain.toLowerCase()] || weatherBackgrounds['default'];
             const unsplashApiUrl = `https://api.unsplash.com/photos/random?query=${searchTerm}&client_id=${unsplashApiKey}&orientation=portrait`;
-            
             const widget = document.querySelector('.weather-widget');
 
             try {
@@ -370,7 +356,7 @@
                 const data = await response.json(); console.log(data);
 
                 // --- 1. Update Current Weather ---
-                const current = data.list[0];  console.log(data.list[0]);
+                const current = data.list[0]; 
                 const currentIconCode = current.weather[0].icon;
                 const weatherMain = current.weather[0].main;
                 
@@ -378,27 +364,20 @@
                 document.getElementById('current-description').textContent = current.weather[0].description;
                 document.getElementById('current-icon').src = `${iconBaseUrl}${mapOwmIconToSvg(currentIconCode)}.svg`;
                 
-                // --- THIS IS THE UPDATED CALL ---
-                // Now we call the Unsplash API function
                 updateBackgroundFromApi(weatherMain);
 
-                // --- 2. Update Hourly Forecast ---
-                const forecast1 = data.list[1];  console.log(data.list[1]);
-                const forecast2 = data.list[2];  console.log(data.list[2]);
+				const forecast1145 = data.list.find(item => { const forecastTime = new Date(item.dt * 1000); return forecastTime.getHours() === 12; });
+	            const forecast250 = data.list.find(item => { const forecastTime = new Date(item.dt * 1000); return forecastTime.getHours() === 15; });
 
-                if (forecast1) {
-                    const forecast1IconCode = forecast1.weather[0].icon;
-                    document.getElementById('forecast-time-1').textContent = formatTime(forecast1.dt);
-                    document.getElementById('forecast-temp-1').textContent = `${Math.round(forecast1.main.temp)}°`;
-                    document.getElementById('forecast-icon-1').src = `${iconBaseUrl}${mapOwmIconToSvg(forecast1IconCode)}.svg`;
-                }
+				document.getElementById('forecast-time-1').textContent = 'Lunch'; 
+                if (forecast1145) { const forecast1IconCode = forecast1145.weather[0].icon;
+                    document.getElementById('forecast-temp-1').textContent = `${Math.round(forecast1145.main.temp)}°`;
+                    document.getElementById('forecast-icon-1').src = `${iconBaseUrl}${mapOwmIconToSvg(forecast1IconCode)}.svg`;  }
 
-                if (forecast2) {
-                    const forecast2IconCode = forecast2.weather[0].icon;
-                    document.getElementById('forecast-time-2').textContent = formatTime(forecast2.dt);
-                    document.getElementById('forecast-temp-2').textContent = `${Math.round(forecast2.main.temp)}°`;
-                    document.getElementById('forecast-icon-2').src = `${iconBaseUrl}${mapOwmIconToSvg(forecast2IconCode)}.svg`;
-                }
+				document.getElementById('forecast-time-2').textContent = 'Dismissal'; 
+                if (forecast250) { const forecast2IconCode = forecast250.weather[0].icon;
+                    document.getElementById('forecast-temp-2').textContent = `${Math.round(forecast250.main.temp)}°`;
+                    document.getElementById('forecast-icon-2').src = `${iconBaseUrl}${mapOwmIconToSvg(forecast2IconCode)}.svg`;  }
 
             } catch (error) {
                 setErrorState();

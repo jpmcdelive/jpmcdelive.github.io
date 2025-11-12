@@ -309,7 +309,7 @@
         function formatTime(timestamp) {
             const date = new Date(timestamp * 1000);
             let hours = date.getHours();
-            const ampm = hours >= 12 ? 'PM' : 'AM';
+            const ampm = hours >= 12 ? 'pm' : 'am';
             hours = hours % 12;
             hours = hours ? hours : 12; 
             return `${hours} ${ampm}`;
@@ -367,10 +367,10 @@
             try {
                 const response = await fetch(apiUrl);
                 if (!response.ok) throw new Error(`HTTP error! status: ${response.status}`);
-                const data = await response.json();
+                const data = await response.json(); console.log(data);
 
                 // --- 1. Update Current Weather ---
-                const current = data.list[0];
+                const current = data.list[0];  console.log(data.list[0]);
                 const currentIconCode = current.weather[0].icon;
                 const weatherMain = current.weather[0].main;
                 
@@ -383,8 +383,8 @@
                 updateBackgroundFromApi(weatherMain);
 
                 // --- 2. Update Hourly Forecast ---
-                const forecast1 = data.list[1];  
-                const forecast2 = data.list[2];  
+                const forecast1 = data.list[1];  console.log(data.list[1]);
+                const forecast2 = data.list[2];  console.log(data.list[2]);
 
                 if (forecast1) {
                     const forecast1IconCode = forecast1.weather[0].icon;
@@ -473,8 +473,8 @@
             // 4. Generate the QR code *after* the element is in the DOM
             new QRCode(document.getElementById(qrCodeId), {
                 text: article.url,
-                width: 90,
-                height: 90,
+                width: 80,
+                height: 80,
                 colorDark : "#000000",
                 colorLight : "#ffffff",
                 correctLevel : QRCode.CorrectLevel.M

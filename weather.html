@@ -334,7 +334,7 @@
 			if (forecast1145) { const forecast1IconCode = forecast1145.weather[0].icon; document.getElementById('forecast-temp-1').textContent = `${Math.round(forecast1145.main.temp)}°`; document.getElementById('forecast-icon-1').src = `${iconBaseUrl}${mapOwmIconToSvg(forecast1IconCode)}.svg`; } 
 				else { document.getElementById('forecast-temp-1').textContent = '--°'; document.getElementById('forecast-icon-1').src = iconBaseUrl + defaultIcon; }
 
-			document.getElementById('forecast-time-2').textContent = '2:50pm'; // Set static label
+			document.getElementById('forecast-time-2').textContent = 'Dismissal'; // Set static label
             if (forecast250) { const forecast2IconCode = forecast250.weather[0].icon; document.getElementById('forecast-temp-2').textContent = `${Math.round(forecast250.main.temp)}°`; document.getElementById('forecast-icon-2').src = `${iconBaseUrl}${mapOwmIconToSvg(forecast2IconCode)}.svg`;  } 
 				else { document.getElementById('forecast-temp-2').textContent = '--°'; document.getElementById('forecast-icon-2').src = iconBaseUrl + defaultIcon; }
 

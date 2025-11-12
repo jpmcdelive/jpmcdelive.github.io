@@ -279,67 +279,117 @@
 		$('#day').text(moment().format('dddd')); $('#date').text(moment().format('MMMM Do, YYYY')); setCaptions(); setInterval(function() { return setCaptions(); }, 10 * 1000);
 </script>
 
-    <script>
-        const weatherApiKey = '3705bab40a0bc21845733bbd24c752ba'; 
-        const unsplashApiKey = 'VQZFbs5zX4fJECBRq2VN0R9TgBMPOrM7r6d2ZH0qmEs';
-        const city = 'New York'; 
-        const iconBaseUrl = 'https://bmcdn.nl/assets/weather-icons/v3.0/fill/svg/';
-        const defaultIcon = 'cloudy.svg';
-        const weatherBackgrounds = { 'clear': 'clear sky', 'clouds': 'cloudy sky', 'rain': 'rainy weather', 'drizzle': 'drizzle rain', 'thunderstorm': 'thunderstorm lightning', 'snow': 'snowy landscape', 'mist': 'mist fog', 'fog': 'foggy forest', 'default': 'weather background' };
+<script>
+    // VARIABLES
+    const weatherApiKey = '3705bab40a0bc21845733bbd24c752ba'; 
+    const unsplashApiKey = 'VQZFbs5zX4fJECBRq2VN0R9TgBMPOrM7r6d2ZH0qmEs';
+    const city = 'New York'; 
+    const iconBaseUrl = 'https://bmcdn.nl/assets/weather-icons/v3.0/fill/svg/';
+    const defaultIcon = 'cloudy.svg';
+    const weatherBackgrounds = { 'clear': 'clear sky', 'clouds': 'cloudy sky', 'rain': 'rainy weather', 'drizzle': 'drizzle rain', 'thunderstorm': 'thunderstorm lightning', 'snow': 'snowy landscape', 'mist': 'mist fog', 'fog': 'foggy forest', 'default': 'weather background' };
 
+    // WEATHER
+    function mapOwmIconToSvg(iconCode) {
+        const iconMap = {
+            '01d': 'clear-day', '01n': 'clear-night',
+            '02d': 'partly-cloudy-day', '02n': 'partly-cloudy-night',
+            '03d': 'cloudy', '03n': 'cloudy',
+            '04d': 'overcast-day', '04n': 'overcast-night',
+            '09d': 'drizzle', '09n': 'drizzle',
+            '10d': 'partly-cloudy-day-rain', '10n': 'partly-cloudy-night-rain',
+            '11d': 'thunderstorms-day-rain', '11n': 'thunderstorms-night-rain',
+            '13d': 'partly-cloudy-day-snow', '13n': 'partly-cloudy-night-snow',
+            '50d': 'fog-day', '50n': 'fog-night',
+        };
+        return iconMap[iconCode] || 'cloudy';
+    }
 
-	// WEATHER
-        function mapOwmIconToSvg(iconCode) {
-            const iconMap = {
-                '01d': 'clear-day', '01n': 'clear-night',
-                '02d': 'partly-cloudy-day', '02n': 'partly-cloudy-night',
-                '03d': 'cloudy', '03n': 'cloudy',
-                '04d': 'overcast-day', '04n': 'overcast-night',
-                '09d': 'drizzle', '09n': 'drizzle',
-                '10d': 'partly-cloudy-day-rain', '10n': 'partly-cloudy-night-rain',
-                '11d': 'thunderstorms-day-rain', '11n': 'thunderstorms-night-rain',
-                '13d': 'partly-cloudy-day-snow', '13n': 'partly-cloudy-night-snow',
-                '50d': 'fog-day', '50n': 'fog-night',
-            };
-            return iconMap[iconCode] || 'cloudy';
+    async function updateBackgroundFromApi(weatherMain) {
+        if (unsplashApiKey === 'YOUR_UNSPLASH_ACCESS_KEY_HERE') {
+            console.warn('Unsplash API key not set. Using default background.');
+            return;
+        }
+        const searchTerm = weatherBackgrounds[weatherMain.toLowerCase()] || weatherBackgrounds['default'];
+        const unsplashApiUrl = `https://api.unsplash.com/photos/random?query=${searchTerm}&client_id=${unsplashApiKey}&orientation=portrait`;
+        
+        const widget = document.querySelector('.weather-widget');
+
+        try {
+            const response = await fetch(unsplashApiUrl);
+            if (!response.ok) {
+                throw new Error(`Unsplash API error! status: ${response.status}`);
+            }
+            const data = await response.json();
+            const imageUrl = data.urls.regular; 
+            
+            widget.style.backgroundImage = `linear-gradient(rgba(0,0,0,0.3), rgba(0,0,0,0.3)), url('${imageUrl}')`;
+
+        } catch (error) {
+            console.error('Error fetching Unsplash background:', error);
+        }
+    }
+    
+    function setErrorState() {
+        console.error('Error fetching weather data. Setting default state.');
+        
+        document.getElementById('current-description').textContent = 'Failed to load';
+        document.getElementById('current-temp').textContent = '--°';
+        document.getElementById('current-icon').src = iconBaseUrl + defaultIcon;
+        
+        // Set defaults on error
+        document.getElementById('forecast-time-1').textContent = '11:45am';
+        document.getElementById('forecast-temp-1').textContent = '--°';
+        document.getElementById('forecast-icon-1').src = iconBaseUrl + defaultIcon;
+        
+        document.getElementById('forecast-time-2').textContent = '2:50pm';
+        document.getElementById('forecast-temp-2').textContent = '--°';
+        document.getElementById('forecast-icon-2').src = iconBaseUrl + defaultIcon;
+    }
+
+    async function fetchWeather() {
+        if (weatherApiKey === 'YOUR_OPENWEATHERMAP_API_KEY_HERE') {
+            setErrorState();
+            console.error('Weather API key is placeholder. Please replace it.');
+            document.getElementById('current-description').textContent = 'Set API Key';
+            return;
         }
 
-        function formatTime(timestamp) { const date = new Date(timestamp * 1000); let hours = date.getHours(); const ampm = hours >= 12 ? 'pm' : 'am'; hours = hours % 12; hours = hours ? hours : 12;  return `${hours} ${ampm}`; }
-        async function updateBackgroundFromApi(weatherMain) { if (unsplashApiKey === 'YOUR_UNSPLASH_ACCESS_KEY_HERE') { console.warn('Unsplash API key not set. Using default background.'); return; }
-            const searchTerm = weatherBackgrounds[weatherMain.toLowerCase()] || weatherBackgrounds['default'];
-            const unsplashApiUrl = `https://api.unsplash.com/photos/random?query=${searchTerm}&client_id=${unsplashApiKey}&orientation=portrait`;
-            const widget = document.querySelector('.weather-widget');
-            try { const response = await fetch(unsplashApiUrl); if (!response.ok) { throw new Error(`Unsplash API error! status: ${response.status}`); } const data = await response.json(); const imageUrl = data.urls.regular; widget.style.backgroundImage = `linear-gradient(rgba(0,0,0,0.3), rgba(0,0,0,0.3)), url('${imageUrl}')`; } catch (error) { console.error('Error fetching Unsplash background:', error); } }    
+        const apiUrl = `https://api.openweathermap.org/data/2.5/forecast?q=${city}&appid=${weatherApiKey}&units=imperial`;
 
-		function setErrorState() { console.error('Error fetching weather data. Setting default state.'); document.getElementById('current-description').textContent = 'Failed to load'; document.getElementById('current-temp').textContent = '--°'; document.getElementById('current-icon').src = iconBaseUrl + defaultIcon; document.getElementById('forecast-icon-1').src = iconBaseUrl + defaultIcon; document.getElementById('forecast-icon-2').src = iconBaseUrl + defaultIcon; }
+        try {
+            const response = await fetch(apiUrl);
+            if (!response.ok) throw new Error(`HTTP error! status: ${response.status}`);
+            const data = await response.json();
 
-        async function fetchWeather() {
-            if (weatherApiKey === 'YOUR_OPENWEATHERMAP_API_KEY_HERE') { setErrorState(); console.error('Weather API key is placeholder. Please replace it.'); document.getElementById('current-description').textContent = 'Set API Key'; return; }
-            const apiUrl = `https://api.openweathermap.org/data/2.5/forecast?q=${city}&appid=${weatherApiKey}&units=imperial`;
-            try { const response = await fetch(apiUrl); if (!response.ok) throw new Error(`HTTP error! status: ${response.status}`); const data = await response.json(); console.log(data);
-
-				const current = data.list[0]; 
-                const currentIconCode = current.weather[0].icon;
-                const weatherMain = current.weather[0].main;
-                
-                document.getElementById('current-temp').textContent = `${Math.round(current.main.temp)}°`;
-                document.getElementById('current-description').textContent = current.weather[0].description;
-                document.getElementById('current-icon').src = `${iconBaseUrl}${mapOwmIconToSvg(currentIconCode)}.svg`;
-                
-                updateBackgroundFromApi(weatherMain);
-// --- 2. UPDATE: Find specific forecast times ---
+            // --- 1. Update Current Weather ---
+            const current = data.list[0]; 
+            const currentIconCode = current.weather[0].icon;
+            const weatherMain = current.weather[0].main;
             
-            // Find the forecast for 12:00 PM (12:00)
-            const forecast1145 = data.list.find(item => {
-                const forecastTime = new Date(item.dt * 1000);
-                return forecastTime.getHours() === 12; // 12 PM
-            });
+            document.getElementById('current-temp').textContent = `${Math.round(current.main.temp)}°`;
+            document.getElementById('current-description').textContent = current.weather[0].description;
+            document.getElementById('current-icon').src = `${iconBaseUrl}${mapOwmIconToSvg(currentIconCode)}.svg`;
+            
+            updateBackgroundFromApi(weatherMain);
 
-            // Find the forecast for 3:00 PM (15:00)
-            const forecast250 = data.list.find(item => {
-                const forecastTime = new Date(item.dt * 1000);
-                return forecastTime.getHours() === 15; // 3 PM
-            });
+            // --- 2. UPDATE: New robust logic for finding forecast times ---
+            
+            // Get the city's timezone offset from UTC (in seconds)
+            const timezoneOffset = data.city.timezone; 
+
+            // Helper function to get the TRUE local hour for the city from a UTC timestamp
+            const getLocalHour = (dt) => {
+                // Add the offset to the UTC time
+                const localTimestamp = (dt + timezoneOffset) * 1000;
+                // Create a date and get the UTC hour (which is now the correct local hour)
+                return new Date(localTimestamp).getUTCHours();
+            };
+
+            // Find the forecast for 12:00 PM (hour 12)
+            const forecast1145 = data.list.find(item => getLocalHour(item.dt) === 12);
+
+            // Find the forecast for 3:00 PM (hour 15)
+            const forecast250 = data.list.find(item => getLocalHour(item.dt) === 15);
 
             // --- Update the first forecast block ---
             document.getElementById('forecast-time-1').textContent = '11:45am'; // Set static label
@@ -348,8 +398,10 @@
                 document.getElementById('forecast-temp-1').textContent = `${Math.round(forecast1145.main.temp)}°`;
                 document.getElementById('forecast-icon-1').src = `${iconBaseUrl}${mapOwmIconToSvg(forecast1IconCode)}.svg`;
             } else {
+                // This will run if the 12pm forecast isn't in the list
                 document.getElementById('forecast-temp-1').textContent = '--°';
                 document.getElementById('forecast-icon-1').src = iconBaseUrl + defaultIcon;
+                console.warn('Could not find 12:00 PM forecast.');
             }
 
             // --- Update the second forecast block ---
@@ -359,23 +411,27 @@
                 document.getElementById('forecast-temp-2').textContent = `${Math.round(forecast250.main.temp)}°`;
                 document.getElementById('forecast-icon-2').src = `${iconBaseUrl}${mapOwmIconToSvg(forecast2IconCode)}.svg`;
             } else {
+                // This will run if the 3pm forecast isn't in the list
                 document.getElementById('forecast-temp-2').textContent = '--°';
                 document.getElementById('forecast-icon-2').src = iconBaseUrl + defaultIcon;
+                console.warn('Could not find 3:00 PM forecast.');
             }
 
         } catch (error) {
             setErrorState();
         }
     }
+    
+    document.addEventListener('DOMContentLoaded', () => {
+        fetchWeather();
         
-        document.addEventListener('DOMContentLoaded', () => { fetchWeather();
-            document.querySelectorAll('img').forEach(img => {
-                img.addEventListener('error', () => {
-                    img.src = iconBaseUrl + defaultIcon;
-                });
+        document.querySelectorAll('img').forEach(img => {
+            img.addEventListener('error', () => {
+                img.src = iconBaseUrl + defaultIcon;
             });
         });
-    </script>
+    });
+</script>
  
  <script>
         // --- CONFIGURATION ---

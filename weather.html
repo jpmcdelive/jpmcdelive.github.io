@@ -305,10 +305,7 @@
     }
 
     async function updateBackgroundFromApi(weatherMain) {
-        if (unsplashApiKey === 'YOUR_UNSPLASH_ACCESS_KEY_HERE') {
-            console.warn('Unsplash API key not set. Using default background.');
-            return;
-        }
+        // No need to check for placeholder, your key is in here
         const searchTerm = weatherBackgrounds[weatherMain.toLowerCase()] || weatherBackgrounds['default'];
         const unsplashApiUrl = `https://api.unsplash.com/photos/random?query=${searchTerm}&client_id=${unsplashApiKey}&orientation=portrait`;
         
@@ -347,13 +344,7 @@
     }
 
     async function fetchWeather() {
-        if (weatherApiKey === 'YOUR_OPENWEATHERMAP_API_KEY_HERE') {
-            setErrorState();
-            console.error('Weather API key is placeholder. Please replace it.');
-            document.getElementById('current-description').textContent = 'Set API Key';
-            return;
-        }
-
+        // No need to check for placeholder, your key is in here
         const apiUrl = `https://api.openweathermap.org/data/2.5/forecast?q=${city}&appid=${weatherApiKey}&units=imperial`;
 
         try {
@@ -372,24 +363,24 @@
             
             updateBackgroundFromApi(weatherMain);
 
-            // --- 2. UPDATE: New robust logic for finding forecast times ---
+            // --- 2. UPDATE: Corrected logic ---
             
-            // Get the city's timezone offset from UTC (in seconds)
             const timezoneOffset = data.city.timezone; 
 
-            // Helper function to get the TRUE local hour for the city from a UTC timestamp
             const getLocalHour = (dt) => {
-                // Add the offset to the UTC time
                 const localTimestamp = (dt + timezoneOffset) * 1000;
-                // Create a date and get the UTC hour (which is now the correct local hour)
                 return new Date(localTimestamp).getUTCHours();
             };
 
-            // Find the forecast for 12:00 PM (hour 12)
-            const forecast1145 = data.list.find(item => getLocalHour(item.dt) === 12);
+            // --- THIS IS THE FIX ---
+            // We are now looking for 1:00 PM (13) and 4:00 PM (16), 
+            // which are the actual hours the API provides.
+            
+            // Find the forecast for 1:00 PM (hour 13)
+            const forecast1145 = data.list.find(item => getLocalHour(item.dt) === 13);
 
-            // Find the forecast for 3:00 PM (hour 15)
-            const forecast250 = data.list.find(item => getLocalHour(item.dt) === 15);
+            // Find the forecast for 4:00 PM (hour 16)
+            const forecast250 = data.list.find(item => getLocalHour(item.dt) === 16);
 
             // --- Update the first forecast block ---
             document.getElementById('forecast-time-1').textContent = '11:45am'; // Set static label
@@ -398,10 +389,9 @@
                 document.getElementById('forecast-temp-1').textContent = `${Math.round(forecast1145.main.temp)}°`;
                 document.getElementById('forecast-icon-1').src = `${iconBaseUrl}${mapOwmIconToSvg(forecast1IconCode)}.svg`;
             } else {
-                // This will run if the 12pm forecast isn't in the list
                 document.getElementById('forecast-temp-1').textContent = '--°';
                 document.getElementById('forecast-icon-1').src = iconBaseUrl + defaultIcon;
-                console.warn('Could not find 12:00 PM forecast.');
+                console.warn('Could not find 1:00 PM (13:00) forecast.');
             }
 
             // --- Update the second forecast block ---
@@ -411,10 +401,9 @@
                 document.getElementById('forecast-temp-2').textContent = `${Math.round(forecast250.main.temp)}°`;
                 document.getElementById('forecast-icon-2').src = `${iconBaseUrl}${mapOwmIconToSvg(forecast2IconCode)}.svg`;
             } else {
-                // This will run if the 3pm forecast isn't in the list
                 document.getElementById('forecast-temp-2').textContent = '--°';
                 document.getElementById('forecast-icon-2').src = iconBaseUrl + defaultIcon;
-                console.warn('Could not find 3:00 PM forecast.');
+                console.warn('Could not find 4:00 PM (16:00) forecast.');
             }
 
         } catch (error) {

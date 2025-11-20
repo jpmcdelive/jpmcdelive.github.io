@@ -1,246 +1,16 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-    <meta charset="UTF-R">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>P2Gm Signs</title>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/moment.js/2.19.1/moment.min.js" integrity="sha512-Dz4zO7p6MrF+VcOD6PUbA08hK1rv0hDv/wGuxSUjImaUYxRyK2gLC6eQWVqyDN9IM1X/kUA8zkykJS/gEVOd3w==" crossorigin="anonymous" referrerpolicy="no-referrer"></script>
-    <script src="https://code.jquery.com/jquery-3.7.1.slim.min.js" integrity="sha256-kmHvs0B+OpCW5GVHUNjv9rOmY0IvSIRcf7zGUDTDQM8=" crossorigin="anonymous"></script><script src="https://cdn.jsdelivr.net/npm/qrcodejs@1.0.0/qrcode.min.js"></script>
-	<link href="https://fonts.googleapis.com/css2?family=Fira+Sans:ital,wght@0,100;0,400;0,600;0,900;1,400;1,600;1,900&display=swap" rel="stylesheet">
-  	<style>
-  /* --- Global Styles --- */
-  body {
-    font-family: "Fira Sans", sans-serif;
-  	font-weight: 400;
-  	font-style: normal;
-    background-color: #000;
-    color: #fff;
-    margin: 0;
-	width: 240px;
-  }
-
-  /* --- Weather Widget Container --- */
-  .weather-widget {
-    background: linear-gradient(rgba(0, 0, 0, 0.3), rgba(0, 0, 0, 0.3)), 
-                url('https://images.unsplash.com/photo-1534088563585-c3E806f153d8?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=MnwzODU4MjZ8MHwxfHJhbmRvbXx8fHx8fHx8fDE2NzM0MjYxNTE&ixlib=rb-4.0.3&q=80&w=400') no-repeat center center / cover;
-    color: white;
-    border-radius: 0;
-    width: 240px;
-    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
-    transition: background-image .5s ease-in-out;
-  }
-
-  /* --- Current Weather Section --- */
-  .current-weather {
-    display: flex;
-    width: 240px;
-	  margin-bottom: 15px; 
-  }
-
-  .current-temp {
-    font-size: 3.5rem;
-    font-weight: 600;
-    line-height: 1; 
-	  padding: 10px 0 0 30px;
-  }
-
-  .current-conditions {
-    text-align: center;
-	      padding: 0px 41px 0 0;
-  }
-
-  .current-icon {
-    width: 80px;
-    height: 80px;
-  }
-
-  .current-description {
-    font-size: .9rem;
-    margin-top: -5px;
-    text-transform: capitalize;
-  }
-
-  /* --- Forecast Section --- */
-  .forecast {
-    display: flex;
-    justify-content: space-between;
-    padding: 0 50px 10px;
-  }
-
-  .forecast-item {
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    font-size: .9rem;
-	  padding: 0 20px; 
-  }
-
-  .forecast-time {
-    font-weight: 500;
-    margin-bottom: 0px;
-  }
-
-  .forecast-icon {
-    width: 40px;
-    height: 40px;
-  }
-
-  .forecast-temp {
-    font-size: 1.1rem;
-    font-weight: 500;
-    margin-top: 0px;
-  }
-</style>
-	<style>
-	  #news-widget {
-            width: 240px;
-            background-color: #ffffff;
-            border-radius: 0px;
-            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05);
-            overflow: hidden;
-		  padding-bottom: 10px; 	
-		  margin-bottom: 3px; 
-		  min-height: 410px; 
-        }
-
-        header {
-            padding: 16px 20px;
-            border-bottom: 1px solid #eee;
-            background-color: #fafafa;
-        }
-
-        header h2 {
-            margin: 0;
-            font-size: 20px;
-        }
-        #carousel-content { padding: 0  !important; }
-        /* Styles for the article card itself */
-        .article-card {
-            display: flex;
-            gap: 15px;
-            animation: fadeIn 0.4s ease-out;
-        }
-
-        .article-image {
-            width: 240px;
-            height: 160px;
-            object-fit: cover;
-            border-radius: 0px;
-            flex-shrink: 0;
-        }
-
-        .article-content {
-            flex-grow: 1;
-            min-width: 0; /* Fix for flexbox overflow */
-        }
-
-        .article-content h3 {
-            margin: 0 0 5px 0;
-            font-size: 18px;
-			color: black;
-			padding: 0 8px; 
-			font-weight: 600;
-        }
-
-        .article-content a {
-            text-decoration: none;
-            color: #121212;
-        }
-
-        .article-content a:hover {
-            text-decoration: underline;
-        }
-
-        .article-content p {
-            margin: 0 0 8px 0;
-			padding: 0 8px;
-            font-size: 14px;
-            color: #555;
-            display: -webkit-box;
-            -webkit-line-clamp: 4;
-            -webkit-box-orient: vertical;
-            overflow: hidden;
-        }
-
-        /* QR Code is now part of the main content */
-        .article-qrcode {
-            width: 90px;
-            height: 90px;
-            flex-shrink: 0;
-        }
-        
-        .article-qrcode canvas,
-        .article-qrcode img {
-            padding: 4px 5px 25px 7px;
-            background: #fff;
-            box-shadow: 0 1px 3px rgba(0,0,0,0.1);
-        }
-
-        /* Navigation styles */
-        #carousel-nav {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            padding: 10px 20px;
-            border-top: 1px solid #eee;
-            background-color: #fafafa;
-        }
-
-        #carousel-nav button {
-            background-color: #007aff;
-            color: white;
-            border: none;
-            padding: 8px 14px;
-            border-radius: 5px;
-            font-size: 14px;
-            font-weight: 500;
-            cursor: pointer;
-        }
-		.time-date {text-align: center; BACKGROUND: #333; margin:2px 0 3px; padding-bottom: 10px;}
-		#day {font-size: 2.5em; font-weight: 100; line-height: 1.3; }
-		#date {font-size: 1.2em; font-weight: 400; line-height: .7; }
-		#time {font-size: 3.5em; line-height: 1; font-weight: 900; }
-		#next-day-off { background: #444; margin: 3px 0; text-align: center; padding: 7px 0; }
-		#next-day-off h3 { margin-bottom: 0px; margin-top: 4px; }
-        #next-day-off p { margin: 0;  }
-	
-        #carousel-nav button:hover {
-            background-color: #0056b3;
-        }
-        
-        #carousel-nav button:disabled {
-            background-color: #ccc;
-            cursor: not-allowed;
-        }
-
-        #slide-indicator {
-            font-size: 14px;
-            color: #555;
-            font-weight: 500;
-        }
-
-        .loading, .error {
-            text-align: center;
-            padding: 40px;
-            font-size: 16px;
-            color: #777;
-        }
-        
-        @keyframes fadeIn {
-            from { opacity: 0; transform: translateY(0px); }
-            to { opacity: 1; transform: translateY(0); }
-        }
-</style>
-
+    <meta charset="UTF-R"><meta name="viewport" content="width=device-width, initial-scale=1.0"><title>P2Gm Signs</title>
+	<script src="https://cdn.jsdelivr.net/npm/qrcodejs@1.0.0/qrcode.min.js"></script> <link href="https://fonts.googleapis.com/css2?family=Fira+Sans:ital,wght@0,100;0,400;0,900;1,400;1,900&display=swap" rel="stylesheet">
+	<style>body{font-family:"Fira Sans",sans-serif;font-weight:400;font-style:normal;background-color:#000;color:#fff;margin:0;width:240px}.weather-widget{background:linear-gradient(rgba(0,0,0,.3),rgba(0,0,0,.3)),url('https://images.unsplash.com/photo-1534088563585-c3E806f153d8?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=MnwzODU4MjZ8MHwxfHJhbmRvbXx8fHx8fHx8fDE2NzM0MjYxNTE&ixlib=rb-4.0.3&q=80&w=400') no-repeat center center/cover;color:white;border-radius:0;width:240px;box-shadow:0 4px 12px rgba(0,0,0,.1);transition:background-image .5s ease-in-out}.current-weather{display:flex;width:240px;margin-bottom:15px}.current-temp{font-size:3.5rem;font-weight:600;line-height:1;padding:10px 0 0 30px}.current-conditions{text-align:center;padding:0 41px 0 0}.current-icon{width:80px;height:80px}.current-description{font-size:.9rem;margin-top:-5px;text-transform:capitalize}.forecast{display:flex;justify-content:space-between;padding:0 50px 10px}.forecast-item{display:flex;flex-direction:column;align-items:center;font-size:.9rem;padding:0 20px}.forecast-time{font-weight:500;margin-bottom:0}.forecast-icon{width:40px;height:40px}.forecast-temp{font-size:1.1rem;font-weight:500;margin-top:0}#news-widget{width:240px;background-color:#fff;border-radius:0;box-shadow:0 4px 12px rgba(0,0,0,.05);overflow:hidden;padding-bottom:10px;margin-bottom:3px;min-height:410px}header{padding:16px 20px;border-bottom:1px solid #eee;background-color:#fafafa}header h2{margin:0;font-size:20px}#carousel-content{padding:0!important}.article-card{display:flex;gap:15px;animation:fadeIn .4s ease-out}.article-image{width:240px;height:160px;object-fit:cover;border-radius:0;flex-shrink:0}.article-content{flex-grow:1;min-width:0}.article-content h3{margin:0 0 5px 0;font-size:18px;color:black;padding:0 8px;font-weight:600}.article-content a{text-decoration:none;color:#121212}.article-content a:hover{text-decoration:underline}.article-content p{margin:0 0 8px 0;padding:0 8px;font-size:14px;color:#555;display:-webkit-box;-webkit-line-clamp:4;-webkit-box-orient:vertical;overflow:hidden}.article-qrcode{width:90px;height:90px;flex-shrink:0}.article-qrcode canvas,.article-qrcode img{padding:4px 5px 25px 7px;background:#fff;box-shadow:0 1px 3px rgba(0,0,0,.1)}#carousel-nav{display:flex;justify-content:space-between;align-items:center;padding:10px 20px;border-top:1px solid #eee;background-color:#fafafa}#carousel-nav button{background-color:#007aff;color:white;border:none;padding:8px 14px;border-radius:5px;font-size:14px;font-weight:500;cursor:pointer}.time-date{text-align:center;background:#333;margin:2px 0 3px;padding-bottom:10px}#day{font-size:2.5em;font-weight:100;line-height:1.3}#date{font-size:1.2em;font-weight:400;line-height:.7}#time{font-size:3.5em;line-height:1;font-weight:900}#next-day-off{background:#444;margin:3px 0;text-align:center;padding:7px 0}#next-day-off h3{margin-bottom:0;margin-top:4px}#next-day-off p{margin:0}#carousel-nav button:hover{background-color:#0056b3}#carousel-nav button:disabled{background-color:#ccc;cursor:not-allowed}#slide-indicator{font-size:14px;color:#555;font-weight:500}.loading,.error{text-align:center;padding:40px;font-size:16px;color:#777}@keyframes fadeIn{from{opacity:0;transform:translateY(0)}to{opacity:1;transform:translateY(0)}}</style>
 </head>
 <body>
-    
     <div class="time-date">
        	<div id="day" class="caption dayText"></div>
     	<div id="date" class="caption dateText"></div>
 	    <div id="time" class="caption timeText"></div>
     </div>
-    
     <div class="weather-widget">
         <div class="current-weather">
             <div class="current-temp" id="current-temp">--°</div>
@@ -262,7 +32,6 @@
             </div>
         </div>
     </div>
-
     <div id="next-day-off">
         <h3>SCHOOL CLOSED 11/27</h3>
         <p>Thanksgiving</p>
@@ -274,184 +43,76 @@
             </div>
             </div>
    </div>
+	
 <script>
-		var setCaptions; setCaptions = function() { var hour, now, minute; now = new Date(); hour = now.getHours(); minute = now.getMinutes(); return $('#time').text(moment().format('h:mm a')); };
-		$('#day').text(moment().format('dddd')); $('#date').text(moment().format('MMMM Do, YYYY')); setCaptions(); setInterval(function() { return setCaptions(); }, 10 * 1000);
-</script>
+	var setCaptions = function() { const now = new Date(); const timeOptions = { hour: 'numeric', minute: '2-digit', hour12: true }; const formattedTime = new Intl.DateTimeFormat('en-US', timeOptions).format(now); 
+	document.getElementById('time').textContent = formattedTime; };
+	const now = new Date(); const dayOptions = { weekday: 'long' }; document.getElementById('day').textContent = new Intl.DateTimeFormat('en-US', dayOptions).format(now);
+	function getOrdinalDate(date) { const day = date.getDate(); const s = ['th', 'st', 'nd', 'rd']; const v = day % 100; return day + (s[(v - 20) % 10] || s[v] || s[0]);} const monthYearOptions = { year: 'numeric', month: 'long' }; const monthYear = new Intl.DateTimeFormat('en-US', monthYearOptions).format(now); const fullDateText = monthYear.replace(/\d+/, getOrdinalDate(now)); document.getElementById('date').textContent = fullDateText;
+	setCaptions();setInterval(function() {setCaptions();}, 10 * 1000);
 
-<script>
-    // VARIABLES
-    const weatherApiKey = '3705bab40a0bc21845733bbd24c752ba'; 
+	const weatherApiKey = '3705bab40a0bc21845733bbd24c752ba'; 
     const unsplashApiKey = 'VQZFbs5zX4fJECBRq2VN0R9TgBMPOrM7r6d2ZH0qmEs';
     const city = 'New York'; 
     const iconBaseUrl = 'https://bmcdn.nl/assets/weather-icons/v3.0/fill/svg/';
     const defaultIcon = 'cloudy.svg';
     const weatherBackgrounds = { 'clear': 'clear sky', 'clouds': 'cloudy sky', 'rain': 'rainy weather', 'drizzle': 'drizzle rain', 'thunderstorm': 'thunderstorm lightning', 'snow': 'snowy landscape', 'mist': 'mist fog', 'fog': 'foggy forest', 'default': 'weather background' };
-
-    // WEATHER
-    function mapOwmIconToSvg(iconCode) {
-        const iconMap = {
-            '01d': 'clear-day', '01n': 'clear-night',
-            '02d': 'partly-cloudy-day', '02n': 'partly-cloudy-night',
-            '03d': 'cloudy', '03n': 'cloudy',
-            '04d': 'overcast-day', '04n': 'overcast-night',
-            '09d': 'drizzle', '09n': 'drizzle',
-            '10d': 'partly-cloudy-day-rain', '10n': 'partly-cloudy-night-rain',
-            '11d': 'thunderstorms-day-rain', '11n': 'thunderstorms-night-rain',
-            '13d': 'partly-cloudy-day-snow', '13n': 'partly-cloudy-night-snow',
-            '50d': 'fog-day', '50n': 'fog-night',
-        };
-        return iconMap[iconCode] || 'cloudy';
-    }
-
+    function mapOwmIconToSvg(iconCode) { const iconMap = { '01d': 'clear-day', '01n': 'clear-night', '02d': 'partly-cloudy-day', '02n': 'partly-cloudy-night', '03d': 'cloudy', '03n': 'cloudy', '04d': 'overcast-day', '04n': 'overcast-night', '09d': 'drizzle', '09n': 'drizzle', '10d': 'partly-cloudy-day-rain', '10n': 'partly-cloudy-night-rain', '11d': 'thunderstorms-day-rain', '11n': 'thunderstorms-night-rain', '13d': 'partly-cloudy-day-snow', '13n': 'partly-cloudy-night-snow', '50d': 'fog-day', '50n': 'fog-night', }; return iconMap[iconCode] || 'cloudy'; }
     async function updateBackgroundFromApi(weatherMain) {
-        // No need to check for placeholder, your key is in here
         const searchTerm = weatherBackgrounds[weatherMain.toLowerCase()] || weatherBackgrounds['default'];
         const unsplashApiUrl = `https://api.unsplash.com/photos/random?query=${searchTerm}&client_id=${unsplashApiKey}&orientation=portrait`;
-        
         const widget = document.querySelector('.weather-widget');
-
-        try {
-            const response = await fetch(unsplashApiUrl);
-            if (!response.ok) {
-                throw new Error(`Unsplash API error! status: ${response.status}`);
-            }
-            const data = await response.json();
-            const imageUrl = data.urls.regular; 
-            
-            widget.style.backgroundImage = `linear-gradient(rgba(0,0,0,0.3), rgba(0,0,0,0.3)), url('${imageUrl}')`;
-
-        } catch (error) {
-            console.error('Error fetching Unsplash background:', error);
-        }
-    }
-    
-    function setErrorState() {
-        console.error('Error fetching weather data. Setting default state.');
-        
+        try { const response = await fetch(unsplashApiUrl); if (!response.ok) { throw new Error(`Unsplash API error! status: ${response.status}`); } const data = await response.json(); const imageUrl = data.urls.regular; widget.style.backgroundImage = `linear-gradient(rgba(0,0,0,0.3), rgba(0,0,0,0.3)), url('${imageUrl}')`; } catch (error) { console.error('Error fetching Unsplash background:', error); } }
+    function setErrorState() { console.error('Error fetching weather data. Setting default state.');
         document.getElementById('current-description').textContent = 'Failed to load';
         document.getElementById('current-temp').textContent = '--°';
         document.getElementById('current-icon').src = iconBaseUrl + defaultIcon;
-        
-        // Set defaults on error
         document.getElementById('forecast-time-1').textContent = '11:45am';
         document.getElementById('forecast-temp-1').textContent = '--°';
         document.getElementById('forecast-icon-1').src = iconBaseUrl + defaultIcon;
-        
         document.getElementById('forecast-time-2').textContent = '2:50pm';
         document.getElementById('forecast-temp-2').textContent = '--°';
-        document.getElementById('forecast-icon-2').src = iconBaseUrl + defaultIcon;
-    }
-
+        document.getElementById('forecast-icon-2').src = iconBaseUrl + defaultIcon; }
     async function fetchWeather() {
-        // No need to check for placeholder, your key is in here
         const apiUrl = `https://api.openweathermap.org/data/2.5/forecast?q=${city}&appid=${weatherApiKey}&units=imperial`;
-
         try {
             const response = await fetch(apiUrl);
             if (!response.ok) throw new Error(`HTTP error! status: ${response.status}`);
             const data = await response.json();
-
-            // --- 1. Update Current Weather ---
             const current = data.list[0]; 
             const currentIconCode = current.weather[0].icon;
-            const weatherMain = current.weather[0].main;
-            
+            const weatherMain = current.weather[0].main;            
             document.getElementById('current-temp').textContent = `${Math.round(current.main.temp)}°`;
             document.getElementById('current-description').textContent = current.weather[0].description;
             document.getElementById('current-icon').src = `${iconBaseUrl}${mapOwmIconToSvg(currentIconCode)}.svg`;
-            
             updateBackgroundFromApi(weatherMain);
-
-            // --- 2. UPDATE: Corrected logic ---
-            
-            const timezoneOffset = data.city.timezone; 
-
-            const getLocalHour = (dt) => {
-                const localTimestamp = (dt + timezoneOffset) * 1000;
-                return new Date(localTimestamp).getUTCHours();
-            };
-
-            // --- THIS IS THE FIX ---
-            // We are now looking for 1:00 PM (13) and 4:00 PM (16), 
-            // which are the actual hours the API provides.
-            
-            // Find the forecast for 1:00 PM (hour 13)
+			const timezoneOffset = data.city.timezone; 
+            const getLocalHour = (dt) => { const localTimestamp = (dt + timezoneOffset) * 1000; return new Date(localTimestamp).getUTCHours(); };
             const forecast1145 = data.list.find(item => getLocalHour(item.dt) === 13);
-
-            // Find the forecast for 4:00 PM (hour 16)
             const forecast250 = data.list.find(item => getLocalHour(item.dt) === 16);
-
-            // --- Update the first forecast block ---
             document.getElementById('forecast-time-1').textContent = 'Lunch'; // Set static label
-            if (forecast1145) {
-                const forecast1IconCode = forecast1145.weather[0].icon;
-                document.getElementById('forecast-temp-1').textContent = `${Math.round(forecast1145.main.temp)}°`;
-                document.getElementById('forecast-icon-1').src = `${iconBaseUrl}${mapOwmIconToSvg(forecast1IconCode)}.svg`;
-            } else {
-                document.getElementById('forecast-temp-1').textContent = '--°';
-                document.getElementById('forecast-icon-1').src = iconBaseUrl + defaultIcon;
-                console.warn('Could not find 1:00 PM (13:00) forecast.');
-            }
-
-            // --- Update the second forecast block ---
+            if (forecast1145) { const forecast1IconCode = forecast1145.weather[0].icon;document.getElementById('forecast-temp-1').textContent = `${Math.round(forecast1145.main.temp)}°`; document.getElementById('forecast-icon-1').src = `${iconBaseUrl}${mapOwmIconToSvg(forecast1IconCode)}.svg`; }
+			else { document.getElementById('forecast-temp-1').textContent = '--°'; document.getElementById('forecast-icon-1').src = iconBaseUrl + defaultIcon; console.warn('Could not find 1:00 PM (13:00) forecast.'); }
             document.getElementById('forecast-time-2').textContent = 'Dismissal'; // Set static label
-            if (forecast250) {
-                const forecast2IconCode = forecast250.weather[0].icon;
-                document.getElementById('forecast-temp-2').textContent = `${Math.round(forecast250.main.temp)}°`;
-                document.getElementById('forecast-icon-2').src = `${iconBaseUrl}${mapOwmIconToSvg(forecast2IconCode)}.svg`;
-            } else {
-                document.getElementById('forecast-temp-2').textContent = '--°';
-                document.getElementById('forecast-icon-2').src = iconBaseUrl + defaultIcon;
-                console.warn('Could not find 4:00 PM (16:00) forecast.');
-            }
-
-        } catch (error) {
-            setErrorState();
-        }
-    }
-    
-    document.addEventListener('DOMContentLoaded', () => {
-        fetchWeather();
-        
-        document.querySelectorAll('img').forEach(img => {
-            img.addEventListener('error', () => {
-                img.src = iconBaseUrl + defaultIcon;
-            });
-        });
-    });
-</script>
- 
- <script>
-        // --- CONFIGURATION ---
-        // ⚠️ PASTE YOUR NYT API KEY HERE
-        const NYT_API_KEY = "fA2AACnKOZWVnU8C0kcCLkivelqlxDQc";
-        const NYT_SECTION = "home"; 
-        const ARTICLE_COUNT = 7;
-        // --- END CONFIGURATION ---
-
-        // Global variables
-        let articlesData = [];
-        let currentIndex = 0;
-
-        // DOM Elements
+            if (forecast250) { const forecast2IconCode = forecast250.weather[0].icon; document.getElementById('forecast-temp-2').textContent = `${Math.round(forecast250.main.temp)}°`;document.getElementById('forecast-icon-2').src = `${iconBaseUrl}${mapOwmIconToSvg(forecast2IconCode)}.svg`; } 
+			else { document.getElementById('forecast-temp-2').textContent = '--°'; document.getElementById('forecast-icon-2').src = iconBaseUrl + defaultIcon; console.warn('Could not find 4:00 PM (16:00) forecast.'); }} 
+		catch (error) { setErrorState(); } }
+    document.addEventListener('DOMContentLoaded', () => { fetchWeather(); document.querySelectorAll('img').forEach(img => { img.addEventListener('error', () => { img.src = iconBaseUrl + defaultIcon; }); }); });
+    const NYT_API_KEY = "fA2AACnKOZWVnU8C0kcCLkivelqlxDQc";
+	const NYT_SECTION = "home"; 
+    const ARTICLE_COUNT = 7;
+    let articlesData = [];
+    let currentIndex = 0;
         const carouselContent = document.getElementById('carousel-content');
         const loadingMessage = document.getElementById('loading-message');
         const navContainer = document.getElementById('carousel-nav');
         const prevBtn = document.getElementById('prev-btn');
         const nextBtn = document.getElementById('next-btn');
         const slideIndicator = document.getElementById('slide-indicator');
-
         const apiUrl = `https://api.nytimes.com/svc/topstories/v2/${NYT_SECTION}.json?api-key=${NYT_API_KEY}`;
-
-        // --- FUNCTIONS ---
-
-        function renderArticle(index) {
+	function renderArticle(index) {
             if (articlesData.length === 0) return;
-
             const article = articlesData[index];
-            
-            // 1. Find a valid image
             let imageUrl = "";
             let imageAlt = "Article image";
             if (article.multimedia && article.multimedia.length > 0) {

@@ -38,7 +38,7 @@
 		      { name: "sched_ending.png", 		start: 890, end: 960 }  // 2:50 - 4:00 (16:00)
 		    ]; const activePeriod = schedule.find(p => currentMinutes >= p.start && currentMinutes < p.end);
 		    if (activePeriod) { statusText = activePeriod.name; } else if (currentMinutes < 480) { statusText = "sched_goodmorning.png"; } else if (currentMinutes >= 960) { statusText = "sched_closed.png"; } 
-				var Image_Id = document.getElementById('current-period'); Image_Id.src = "https://jpmcdelive.github.io/schedule/"+statusText; }
+				var Image_Id = document.getElementById('current-period'); var newURL = "https://jpmcdelive.github.io/schedule/"+statusText; console.log(newURL); Image_Id.src = newURL } 
 			updateSchedule(); setInterval(updateSchedule, 60000);
 		// Time & Date
 			var setCaptions=function(){const now=new Date();const timeOptions={hour:'numeric',minute:'2-digit',hour12:true};const formattedTime=new Intl.DateTimeFormat('en-US',timeOptions).format(now);document.getElementById('time').textContent=formattedTime};const now=new Date();const dayOptions={weekday:'long'};document.getElementById('day').textContent=new Intl.DateTimeFormat('en-US',dayOptions).format(now);function getOrdinalDate(date){const day=date.getDate();const s=['th','st','nd','rd'];const v=day%100;return day+(s[(v-20)%10]||s[v]||s[0])}const monthYearOptions={year:'numeric',month:'long'};const monthYear=new Intl.DateTimeFormat('en-US',monthYearOptions).format(now);const fullDateText=monthYear.replace(/\d+/,getOrdinalDate(now));document.getElementById('date').textContent=fullDateText;setCaptions();setInterval(function(){setCaptions()},10*1000);

@@ -16,7 +16,7 @@
 		<!-- TIME --> 
 			<div class="time-date"> <div id="day" class="caption dayText"></div> <div id="date" class="caption dateText"></div> <div id="time" class="caption timeText"></div> </div>
 	    <!-- PERIOD -->
-			<div id="schedule-widget"><div id="current-period">Loading...</div></div>
+			<div id="schedule-widget"><img id="current-period" src=""/></div>
 		<!-- WEATHER -->
 		    <div class="weather-widget"> <div class="current-weather"> <div class="current-temp" id="current-temp">--°</div> <div class="current-conditions"> <img src="" alt="Weather icon" class="current-icon" id="current-icon"> <div class="current-description" id="current-description">Loading...</div> </div> </div> <div class="forecast"> <div class="forecast-item"> <div class="forecast-time" id="forecast-time-1">--:-- --</div> <img src="" alt="Icon" class="forecast-icon" id="forecast-icon-1"> <div class="forecast-temp" id="forecast-temp-1">--°</div> </div> <div class="forecast-item"> <div class="forecast-time" id="forecast-time-2">--:-- --</div> <img src="" alt="Icon" class="forecast-icon" id="forecast-icon-2"> <div class="forecast-temp" id="forecast-temp-2">--°</div> </div> </div> </div>
 	    <!-- NEXT DAY OFF -->
@@ -27,17 +27,18 @@
 	<script>
 		// PERIOD WIDGET
 			function updateSchedule() { const now = new Date(); const currentMinutes = (now.getHours() * 60) + now.getMinutes(); let statusText = "Free Time"; const schedule = [
-		      { name: "Breakfast",    start: 480, end: 530 }, // 8:00 - 8:50
-		      { name: "Period 1",     start: 530, end: 580 }, // 8:50 - 9:40
-		      { name: "Period 2",     start: 580, end: 632 }, // 9:40 - 10:32
-		      { name: "Period 3",     start: 632, end: 686 }, // 10:32 - 11:24
-		      { name: "Lunch",        start: 686, end: 738 }, // 11:26 - 12:18
-		      { name: "Period 5",     start: 738, end: 788 }, // 12:18 - 1:08 (13:08)
-		      { name: "MTSS",         start: 788, end: 840 }, // 1:08 - 2:00 (14:00)
-		      { name: "Manhattan Hub",start: 840, end: 890 }, // 2:00 - 2:50 (14:50)
-		      { name: "Safe Travels", start: 890, end: 960 }  // 2:50 - 4:00 (16:00)
+		      { name: "sched_breakfast",    start: 480, end: 530 }, // 8:00 - 8:50
+		      { name: "sched_period1",     start: 530, end: 580 }, // 8:50 - 9:40
+		      { name: "sched_period2",     start: 580, end: 632 }, // 9:40 - 10:32
+		      { name: "sched_period3",     start: 632, end: 686 }, // 10:32 - 11:24
+		      { name: "sched_lunch",        start: 686, end: 738 }, // 11:26 - 12:18
+		      { name: "sched_period5",      start: 738, end: 788 }, // 12:18 - 1:08 (13:08)
+		      { name: "sched_ending.png",   start: 788, end: 840 }, // 1:08 - 2:00 (14:00)
+		      { name: "sched_ending.png",	start: 840, end: 890 }, // 2:00 - 2:50 (14:50)
+		      { name: "sched_ending.png", 	start: 890, end: 960 }  // 2:50 - 4:00 (16:00)
 		    ]; const activePeriod = schedule.find(p => currentMinutes >= p.start && currentMinutes < p.end);
-		    if (activePeriod) { statusText = activePeriod.name; } else if (currentMinutes < 480) { statusText = "Before School"; } else if (currentMinutes >= 960) { statusText = "School Closed"; } document.getElementById("current-period").innerText = statusText; }
+		    if (activePeriod) { statusText = activePeriod.name; } else if (currentMinutes < 480) { statusText = "Before School"; } else if (currentMinutes >= 960) { statusText = "School Closed"; } '
+				var Image_Id = document.getElementById('current-period'); Image_Id.src = "https://jpmcdelive.github.io/schedule/"+statusText; }
 			updateSchedule(); setInterval(updateSchedule, 60000);
 		// Time & Date
 			var setCaptions=function(){const now=new Date();const timeOptions={hour:'numeric',minute:'2-digit',hour12:true};const formattedTime=new Intl.DateTimeFormat('en-US',timeOptions).format(now);document.getElementById('time').textContent=formattedTime};const now=new Date();const dayOptions={weekday:'long'};document.getElementById('day').textContent=new Intl.DateTimeFormat('en-US',dayOptions).format(now);function getOrdinalDate(date){const day=date.getDate();const s=['th','st','nd','rd'];const v=day%100;return day+(s[(v-20)%10]||s[v]||s[0])}const monthYearOptions={year:'numeric',month:'long'};const monthYear=new Intl.DateTimeFormat('en-US',monthYearOptions).format(now);const fullDateText=monthYear.replace(/\d+/,getOrdinalDate(now));document.getElementById('date').textContent=fullDateText;setCaptions();setInterval(function(){setCaptions()},10*1000);

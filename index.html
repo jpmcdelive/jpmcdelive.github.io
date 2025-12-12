@@ -27,17 +27,17 @@
 	<script>
 		// PERIOD WIDGET
 			function updateSchedule() { const now = new Date(); const currentMinutes = (now.getHours() * 60) + now.getMinutes(); let statusText = "Free Time"; const schedule = [
-		      { name: "sched_breakfast",    start: 480, end: 530 }, // 8:00 - 8:50
-		      { name: "sched_period1",     start: 530, end: 580 }, // 8:50 - 9:40
-		      { name: "sched_period2",     start: 580, end: 632 }, // 9:40 - 10:32
-		      { name: "sched_period3",     start: 632, end: 686 }, // 10:32 - 11:24
-		      { name: "sched_lunch",        start: 686, end: 738 }, // 11:26 - 12:18
-		      { name: "sched_period5",      start: 738, end: 788 }, // 12:18 - 1:08 (13:08)
-		      { name: "sched_ending.png",   start: 788, end: 840 }, // 1:08 - 2:00 (14:00)
-		      { name: "sched_ending.png",	start: 840, end: 890 }, // 2:00 - 2:50 (14:50)
-		      { name: "sched_ending.png", 	start: 890, end: 960 }  // 2:50 - 4:00 (16:00)
+		      { name: "sched_breakfast.png",   	start: 480, end: 530 }, // 8:00 - 8:50
+		      { name: "sched_period1.png",      start: 530, end: 580 }, // 8:50 - 9:40
+		      { name: "sched_period2.png",      start: 580, end: 632 }, // 9:40 - 10:32
+		      { name: "sched_period3.png",      start: 632, end: 686 }, // 10:32 - 11:24
+		      { name: "sched_lunch.png",        start: 686, end: 738 }, // 11:26 - 12:18
+		      { name: "sched_period5.gif",      start: 738, end: 788 }, // 12:18 - 1:08 (13:08)
+		      { name: "sched_ending.png",   	start: 788, end: 840 }, // 1:08 - 2:00 (14:00)
+		      { name: "sched_ending.png",		start: 840, end: 890 }, // 2:00 - 2:50 (14:50)
+		      { name: "sched_ending.png", 		start: 890, end: 960 }  // 2:50 - 4:00 (16:00)
 		    ]; const activePeriod = schedule.find(p => currentMinutes >= p.start && currentMinutes < p.end);
-		    if (activePeriod) { statusText = activePeriod.name; } else if (currentMinutes < 480) { statusText = "Before School"; } else if (currentMinutes >= 960) { statusText = "School Closed"; } '
+		    if (activePeriod) { statusText = activePeriod.name; } else if (currentMinutes < 480) { statusText = "sched_goodmorning.png"; } else if (currentMinutes >= 960) { statusText = "sched_closed.png"; } 
 				var Image_Id = document.getElementById('current-period'); Image_Id.src = "https://jpmcdelive.github.io/schedule/"+statusText; }
 			updateSchedule(); setInterval(updateSchedule, 60000);
 		// Time & Date

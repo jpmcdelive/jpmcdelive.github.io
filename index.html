@@ -10,17 +10,17 @@
 			.article-content p {  display: -webkit-box; -webkit-line-clamp: 4; -webkit-box-orient: vertical; overflow: hidden; min-height: 65px; max-height: 82px; }
 			#schedule-widget { font-family:"Fira Sans",sans-serif;font-weight:400; display: flex; justify-content: center; align-items: center; margin: 3px 0; background-color: peachpuff; text-align: center; }
 			#schedule-period { font-size: 1.7rem; text-transform: uppercase; color: #555; width:240px; }
-			.container { display: grid; min-height: 100vh; gap: 3px; grid-template-columns: 1fr 150px; grid-template-rows: 1fr 150px; grid-template-areas: "main sd-r" "ft ft"; min-height: 100vh;}
+			.container { display: grid; min-height: 100vh; gap: 3px; grid-template-columns: 1fr 240px; grid-template-rows: 1fr 240px; grid-template-areas: "main sd-r" "ft ft"; min-height: 100vh;}
 			@media (max-width: 768px) {	.container { grid-template-columns: 1fr; grid-template-rows: auto; grid-template-areas: "main" "sd-r" "ft"; } }
-			main { grid-area: main; background: #ffffff; padding: 10px; }
-			.sidebar-r { grid-area: sd-r; background: #f4f4f4; padding: 10px; }
-			footer { grid-area: ft; background: #333333; padding: 10px; }
+			main { grid-area: main; background: #ffffff; padding: 3px; width: 1680px;}
+			.sidebar-r { grid-area: sd-r; background: #f4f4f4; padding: 3px; }
+			footer { grid-area: ft; background: #333333; padding: 3px; }
 		</style>
 	</head>	
 	<body> 
 		<div class="container">
 			<main><span class="lblPreview">Main Content Area</span></main>
-			<aside class="sidebar-r"><span class="lblPreview">Right Sidebar</span>
+			<aside class="sidebar-r"><span class="lblPreview"></span>
 						<!-- TIME --> 
 						<div class="time-date"> <div id="day" class="caption dayText"></div> <div id="date" class="caption dateText"></div> <div id="time" class="caption timeText"></div> </div>
 					    <!-- PERIOD -->
@@ -32,7 +32,7 @@
 					    <!-- NEWS -->
 						<div id="news-widget"><div id="carousel-content"><div id="loading-message" class="loading">Loading news...</div></div></div>
 			</aside>
-  			<footer><span class="lblPreview">Footer</span></footer>
+  			<footer><iframe src="https://kwize.com/quote-of-the-day/embed/&txt=0&font=Lato&color=000000&background=dedede" title="Quote of the Day"></footer>
 		</div>
 	</body>
 	<script>

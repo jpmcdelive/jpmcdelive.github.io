@@ -10,39 +10,69 @@
 			.article-content p {  display: -webkit-box; -webkit-line-clamp: 4; -webkit-box-orient: vertical; overflow: hidden; min-height: 65px; max-height: 82px; }
 			#schedule-widget { font-family:"Fira Sans",sans-serif;font-weight:400; display: flex; justify-content: center; align-items: center; margin: 3px 0; background-color: peachpuff; text-align: center; }
 			#schedule-period { font-size: 1.7rem; text-transform: uppercase; color: #555; width:240px; }
-			.container { display: grid; min-height: 100vh; gap: 3px; grid-template-columns: 1fr 240px; grid-template-rows: 1fr 240px; grid-template-areas: "main sd-r" "ft ft";}
-			@media (max-width: 768px) {	.container { grid-template-columns: 1fr; grid-template-rows: auto; grid-template-areas: "main" "sd-r" "ft"; } }
-			main { grid-area: main; background: #000000; padding: 3px; width: 1500px;}
-			.sidebar-r { grid-area: sd-r; background: #000000; padding: 3px; max-height: 830px; }
-			footer { grid-area: ft; background: #000000; padding: 3px; }
+			
+			.parent {
+			    display: grid;
+			    grid-template-columns: repeat(5, 1fr);
+			    grid-template-rows: repeat(5, 1fr);
+			    gap: 8px;
+			}
+			    
+			.div1 {
+			    grid-column: span 4 / span 4;
+			    grid-row: span 4 / span 4;
+			}
+			
+			.div2 {
+			    grid-row: span 4 / span 4;
+			    grid-column-start: 5;
+			}
+			
+			.div3 {
+			    grid-row-start: 5;
+			}
+			
+			.div4 {
+			    grid-column: span 3 / span 3;
+			    grid-row-start: 5;
+			}
+			
+			.div5 {
+			    grid-column-start: 5;
+			    grid-row-start: 5;
+			}
 		</style>
 	</head>	
 	<body> 
-		<div class="container">
-			<main>
-				<span class="lblPreview">
-					<img src="https://placehold.co/1500x830"/>
-				</span></main>
-			<aside class="sidebar-r">
-				<span class="lblPreview">
-						<img src="https://placehold.co/240x130"/>
-						<!-- TIME --> 
-						<div class="time-date"> <div id="day" class="caption dayText"></div> <div id="date" class="caption dateText"></div> <div id="time" class="caption timeText"></div> </div>
-					    <!-- PERIOD -->
-						<div id="schedule-widget"><img id="schedule-period" src=""/></div>
-						<!-- WEATHER -->
-						<div class="weather-widget"> <div class="current-weather"> <div class="current-temp" id="current-temp">--°</div> <div class="current-conditions"> <img src="" alt="Weather icon" class="current-icon" id="current-icon"> <div class="current-description" id="current-description">Loading...</div> </div> </div> <div class="forecast"> <div class="forecast-item"> <div class="forecast-time" id="forecast-time-1">--:-- --</div> <img src="" alt="Icon" class="forecast-icon" id="forecast-icon-1"> <div class="forecast-temp" id="forecast-temp-1">--°</div> </div> <div class="forecast-item"> <div class="forecast-time" id="forecast-time-2">--:-- --</div> <img src="" alt="Icon" class="forecast-icon" id="forecast-icon-2"> <div class="forecast-temp" id="forecast-temp-2">--°</div> </div> </div> </div>
-					    <!-- NEXT DAY OFF -->
-						<div id="next-day-off"> <h3>NEXT DAY OFF 2/16</h3><p>Winter Recess week of 2/16</p></div>
-					    <!-- NEWS -->
-						<div id="news-widget"><div id="carousel-content"><div id="loading-message" class="loading">Loading news...</div></div></div>
-				</span>
-			</aside>
-  			<footer>
+		
+		<div class="parent">
+		    <div class="div1">
+				<img src="https://placehold.co/1500x830"/>
+			</div>
+		    <div class="div2">
+				<img src="https://placehold.co/240x130"/>	
+				 <!-- PERIOD -->
+				<div id="schedule-widget"><img id="schedule-period" src=""/></div>
+				<!-- NEXT DAY OFF -->
+				<div id="next-day-off"> <h3>NEXT DAY OFF 2/16</h3><p>Winter Recess week of 2/16</p></div>
+				<!-- WEATHER -->
+				<div class="weather-widget"> <div class="current-weather"> <div class="current-temp" id="current-temp">--°</div> <div class="current-conditions"> <img src="" alt="Weather icon" class="current-icon" id="current-icon"> <div class="current-description" id="current-description">Loading...</div> </div> </div> <div class="forecast"> <div class="forecast-item"> <div class="forecast-time" id="forecast-time-1">--:-- --</div> <img src="" alt="Icon" class="forecast-icon" id="forecast-icon-1"> <div class="forecast-temp" id="forecast-temp-1">--°</div> </div> <div class="forecast-item"> <div class="forecast-time" id="forecast-time-2">--:-- --</div> <img src="" alt="Icon" class="forecast-icon" id="forecast-icon-2"> <div class="forecast-temp" id="forecast-temp-2">--°</div> </div> </div> </div>
+				 <!-- NEWS -->
+				<div id="news-widget"><div id="carousel-content"><div id="loading-message" class="loading">Loading news...</div></div></div>
+			</div>
+		    <div class="div3">
 				<img src="https://placehold.co/240x135"/>
+			</div>
+		    <div class="div4">
 				<img src="https://placehold.co/760x135"/>
 				<!-- <iframe src="https://kwize.com/quote-of-the-day/embed/&txt=0&font=Lato&color=000000&background=dedede" title="Quote of the Day" style="width:950px;"></footer> -->
+			</div>
+		    <div class="div5">
+				<!-- TIME --> 
+				<div class="time-date"> <div id="day" class="caption dayText"></div> <div id="date" class="caption dateText"></div> <div id="time" class="caption timeText"></div> </div>
+			</div>
 		</div>
+
 	</body>
 	<script>
 		// PERIOD WIDGET

@@ -2,11 +2,12 @@
 <html lang="en">
 	<head> 
 		<meta charset="UTF-8"><meta name="viewport" content="width=device-width, initial-scale=1.0"><title>P2Gm Digital Signage @ The Manhattan Hub</title>
-		<script src="https://cdn.jsdelivr.net/npm/qrcodejs@1.0.0/qrcode.min.js"></script>
-		<link href="https://fonts.googleapis.com/css2?family=Fira+Sans:ital,wght@0,100;0,400;0,900;1,400;1,900&display=swap" rel="stylesheet">
+		<link rel="preconnect" href="https://fonts.googleapis.com">
+		<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+		<link href="https://fonts.googleapis.com/css2?family=News+Cycle:wght@400;700&family=Roboto+Condensed:ital,wght@0,100..900;1,100..900&display=swap" rel="stylesheet">
 		<style>
 			body {
-				font-family:"Fira Sans",sans-serif;
+				font-family:"Roboto Condensed",sans-serif;
 				font-weight:400;
 				font-style:normal;
 				background-color:#000;
@@ -215,7 +216,7 @@
 				max-height: 82px; 
 			}
 			#schedule-widget { 
-				font-family:"Fira Sans",sans-serif;
+				font-family:"Roboto Condensed",sans-serif;
 				font-weight:400;
 				display: flex; 
 				justify-content: center; 
@@ -322,6 +323,7 @@
 				function renderArticle(index){if(articlesData.length===0)return;const article=articlesData[index];let imageUrl="";let imageAlt="Article image";if(article.multimedia&&article.multimedia.length>0){const image=article.multimedia[2]||article.multimedia[0];imageUrl=image.url;imageAlt=image.caption||article.title}const qrCodeId='article-qr-code-placeholder';carouselContent.innerHTML=`<div class="article-card"><div class="article-content">${imageUrl?`<img src="${imageUrl}" alt="${imageAlt}" class="article-image">`:''}<h3>${article.title}</h3></div></div>`;new QRCode(document.getElementById(qrCodeId),{text:article.url,width:80,height:80,colorDark:"#000000",colorLight:"#ffffff",correctLevel:QRCode.CorrectLevel.M})}async function fetchNews(){try{const response=await fetch(apiUrl);if(!response.ok){if(response.status===401||response.status===403){throw new Error("API Key error. Make sure your key is correct.")}throw new Error(`Network error: ${response.statusText}`)}const data=await response.json();articlesData=data.results.filter(a=>a.title&&a.url&&a.abstract).slice(0,ARTICLE_COUNT);if(articlesData.length===0){throw new Error("No valid articles found.")}loadingMessage.style.display='none';currentIndex=0;renderArticle(currentIndex)}catch(error){console.error("Failed to fetch news:",error);loadingMessage.textContent=`Failed to load news. ${error.message}`;loadingMessage.className='error'}}nextArticle=function(){currentIndex=(currentIndex+1)%articlesData.length;renderArticle(currentIndex)};setInterval(nextArticle,10000);document.addEventListener('DOMContentLoaded',fetchNews);
 	</script>
 </html>
+
 
 
 

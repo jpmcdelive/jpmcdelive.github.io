@@ -269,6 +269,98 @@
 			    grid-row-start: 5;
 			}
 
+			<!-- HTML -->
+<div class="grid-container">
+  <div class="grid-item item-1">Item 1</div>
+  <div class="grid-item item-2">Item 2</div>
+  <div class="grid-item item-3">Item 3</div>
+  <div class="grid-item item-4">Item 4</div>
+  <div class="grid-item item-5">Item 5</div>
+  <div class="grid-item item-6">Item 6</div>
+  <div class="grid-item item-7">Item 7</div>
+  <div class="grid-item item-8">Item 8</div>
+</div>
+
+<!-- CSS -->
+<!-- Using Responsive Mode, elements will be displayed in the order they were created on smaller screens. -->
+<!-- So create the elements in the order you want them to appear on mobile devices.  -->
+<style>
+.grid-container {
+  display: grid;
+  grid-template-columns: repeat(5, 1fr);
+  grid-template-rows: repeat(5, 1fr);
+  gap: 0px;
+}
+
+.item-1 {
+  grid-column: 1 / 5;
+  grid-row: 1 / 5;
+  background: #667eea;
+  --item-order: 0;
+}
+
+.item-2 {
+  grid-column: 5 / 6;
+  grid-row: 1 / 2;
+  background: #667eea;
+  --item-order: 1;
+}
+
+.item-3 {
+  grid-column: 5 / 6;
+  grid-row: 2 / 3;
+  background: #667eea;
+  --item-order: 2;
+}
+
+.item-4 {
+  grid-column: 5 / 6;
+  grid-row: 3 / 4;
+  background: #667eea;
+  --item-order: 3;
+}
+
+.item-5 {
+  grid-column: 5 / 6;
+  grid-row: 4 / 5;
+  background: #667eea;
+  --item-order: 4;
+}
+
+.item-6 {
+  grid-column: 1 / 2;
+  grid-row: 5 / 6;
+  background: #667eea;
+  --item-order: 5;
+}
+
+.item-7 {
+  grid-column: 2 / 5;
+  grid-row: 5 / 6;
+  background: #667eea;
+  --item-order: 6;
+}
+
+.item-8 {
+  grid-column: 5 / 6;
+  grid-row: 5 / 6;
+  background: #667eea;
+  --item-order: 7;
+}
+
+/* Base styles for grid items */
+.grid-item {
+  padding: 20px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: white;
+  font-weight: 500;
+  border-radius: 8px;
+  min-height: 100px;
+}
+</style>
+
 			
 		</style>
 	</head>	
@@ -327,6 +419,7 @@
 				function renderArticle(index){if(articlesData.length===0)return;const article=articlesData[index];let imageUrl="";let imageAlt="Article image";if(article.multimedia&&article.multimedia.length>0){const image=article.multimedia[2]||article.multimedia[0];imageUrl=image.url;imageAlt=image.caption||article.title}const qrCodeId='article-qr-code-placeholder';carouselContent.innerHTML=`<div class="article-card"><div class="article-content">${imageUrl?`<img src="${imageUrl}" alt="${imageAlt}" class="article-image">`:''}<h3>${article.title}</h3></div></div>`;new QRCode(document.getElementById(qrCodeId),{text:article.url,width:80,height:80,colorDark:"#000000",colorLight:"#ffffff",correctLevel:QRCode.CorrectLevel.M})}async function fetchNews(){try{const response=await fetch(apiUrl);if(!response.ok){if(response.status===401||response.status===403){throw new Error("API Key error. Make sure your key is correct.")}throw new Error(`Network error: ${response.statusText}`)}const data=await response.json();articlesData=data.results.filter(a=>a.title&&a.url&&a.abstract).slice(0,ARTICLE_COUNT);if(articlesData.length===0){throw new Error("No valid articles found.")}loadingMessage.style.display='none';currentIndex=0;renderArticle(currentIndex)}catch(error){console.error("Failed to fetch news:",error);loadingMessage.textContent=`Failed to load news. ${error.message}`;loadingMessage.className='error'}}nextArticle=function(){currentIndex=(currentIndex+1)%articlesData.length;renderArticle(currentIndex)};setInterval(nextArticle,10000);document.addEventListener('DOMContentLoaded',fetchNews);
 	</script>
 </html>
+
 
 
 

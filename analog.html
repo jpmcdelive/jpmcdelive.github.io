@@ -308,16 +308,16 @@
 	<body> 
 		<div class="grid-container">
   <div class="grid-item item-1">
-    <img src="schedule/black-history-month.png"/>
+	  <img src="schedule/black-history-month.png"/>
   </div>
   <div class="grid-item item-2">
-   <div id="schedule-widget"><img id="schedule-period" src=""/>
+   <div id="schedule-widget"><img id="schedule-period" src=""/></div>
   </div>
   <div class="grid-item item-3">
    <div id="next-day-off"> <h3>NEXT DAY OFF 2/16</h3><p>Winter Recess week of 2/16</p></div>
   </div>
   <div class="grid-item item-4">
-     <div class="weather-widget"><div class="current-weather"> <div class="current-temp" id="current-temp">--°</div> <div class="current-conditions"> <img src="" alt="Weather icon" class="current-icon" id="current-icon"> <div class="current-description" id="current-description">Loading...</div> </div> </div> <div class="forecast"> <div class="forecast-item"> <div class="forecast-time" id="forecast-time-1">--:-- --</div> <img src="" alt="Icon" class="forecast-icon" id="forecast-icon-1"> <div class="forecast-temp" id="forecast-temp-1">--°</div> </div> <div class="forecast-item"> <div class="forecast-time" id="forecast-time-2">--:-- --</div> <img src="" alt="Icon" class="forecast-icon" id="forecast-icon-2"> <div class="forecast-temp" id="forecast-temp-2">--°</div> </div> </div> </div>
+     <div class="weather-widget"><div class="current-weather"><div class="current-temp" id="current-temp">--°</div> <div class="current-conditions"> <img src="" alt="Weather icon" class="current-icon" id="current-icon"> <div class="current-description" id="current-description">Loading...</div> </div> </div> <div class="forecast"> <div class="forecast-item"> <div class="forecast-time" id="forecast-time-1">--:-- --</div> <img src="" alt="Icon" class="forecast-icon" id="forecast-icon-1"> <div class="forecast-temp" id="forecast-temp-1">--°</div> </div> <div class="forecast-item"> <div class="forecast-time" id="forecast-time-2">--:-- --</div> <img src="" alt="Icon" class="forecast-icon" id="forecast-icon-2"> <div class="forecast-temp" id="forecast-temp-2">--°</div> </div> </div> </div>
   </div>
   <div class="grid-item item-5">
    <div id="news-widget"><div id="carousel-content"><div id="loading-message" class="loading">Loading news...</div></div></div></div> 	 	
@@ -332,17 +332,7 @@
     <div class="time-date"> <div id="day" class="caption dayText"></div> <div id="date" class="caption dateText"></div> <div id="time" class="caption timeText"></div> </div>
   </div>
 </div>
-		<!--
-		<div class="container">
-  			<div class="Main"></div>
-  			<div class="Period"></div>
-  			<div class="NDO"></div>
-	 		<div class="Weather"></div>
-			<div class="News"></div>
-			<div class="P2Gm-logo"></div>
-			<div class="Quote"></div>
-			<div class="Time-Date"></div>
-		</div> -->
+
 	</body>
 	<script>
 		// PERIOD WIDGET
@@ -371,6 +361,7 @@
 											  }async function fetchNews(){try{const response=await fetch(apiUrl);if(!response.ok){if(response.status===401||response.status===403){throw new Error("API Key error. Make sure your key is correct.")}throw new Error(`Network error: ${response.statusText}`)}const data=await response.json();articlesData=data.results.filter(a=>a.title&&a.url&&a.abstract).slice(0,ARTICLE_COUNT);if(articlesData.length===0){throw new Error("No valid articles found.")}loadingMessage.style.display='none';currentIndex=0;renderArticle(currentIndex)}catch(error){console.error("Failed to fetch news:",error);loadingMessage.textContent=`Failed to load news. ${error.message}`;loadingMessage.className='error'}}nextArticle=function(){currentIndex=(currentIndex+1)%articlesData.length;renderArticle(currentIndex)};setInterval(nextArticle,10000);document.addEventListener('DOMContentLoaded',fetchNews);
 	</script>
 </html>
+
 
 
 

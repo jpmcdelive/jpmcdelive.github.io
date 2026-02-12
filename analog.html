@@ -245,7 +245,7 @@
 
 .Main { grid-area: Main; }
 
-.P2Gm logo { grid-area: P2Gm logo; }
+.P2Gm-logo { grid-area: P2Gm-logo; }
 
 .Period { grid-area: Period; }
 
@@ -263,32 +263,14 @@
 </head>	
 	<body> 
 		<div class="container">
-  <div class="Main"><img src="schedule/black-history-month.png"/></div>
-  <div class="P2Gm logo"></div>
-  <div class="Period"></div>
-  <div class="NDO"></div>
-  <div class="News"></div>
-  <div class="Time-Date"></div>
-  <div class="Quote"></div>
-  <div class="Season"></div>
-</div>
-		<div class="parent">
-<!-- MAIN -->
-			<div class="div1"><img src="schedule/black-history-month.png"/></div>
-<!-- PERIOD -->
-			<div class="div2"><div id="schedule-widget"><img id="schedule-period" src=""/></div></div>
-<!-- NEXT DAY OFF -->
-			<div class="div3"><div id="next-day-off"> <h3>NEXT DAY OFF 2/16</h3><p>Winter Recess week of 2/16</p></div></div>
-<!-- WEATHER -->
-			<div class="div4"><div class="weather-widget"> <div class="current-weather"> <div class="current-temp" id="current-temp">--°</div> <div class="current-conditions"> <img src="" alt="Weather icon" class="current-icon" id="current-icon"> <div class="current-description" id="current-description">Loading...</div> </div> </div> <div class="forecast"> <div class="forecast-item"> <div class="forecast-time" id="forecast-time-1">--:-- --</div> <img src="" alt="Icon" class="forecast-icon" id="forecast-icon-1"> <div class="forecast-temp" id="forecast-temp-1">--°</div> </div> <div class="forecast-item"> <div class="forecast-time" id="forecast-time-2">--:-- --</div> <img src="" alt="Icon" class="forecast-icon" id="forecast-icon-2"> <div class="forecast-temp" id="forecast-temp-2">--°</div> </div> </div> </div> </div>
-<!-- NEWS -->
-			<div class="div5"><div id="news-widget"><div id="carousel-content"><div id="loading-message" class="loading">Loading news...</div></div></div></div></div>
-<!-- LOGO -->
-			<div class="div6"><img src="schedule/logo-spot.png"/></div></div>
-<!-- QUOTE -->
-		    <div class="div7"><div align="center"><h1>Education should train the child to use his brains, to make for himself a place in the world and maintain his rights even when it seems that society would shove him into the scrap-heap. -—Helen Keller</h1></div></div>
-<!-- TIME -->
-			<div class="div8"><div class="time-date"> <div id="day" class="caption dayText"></div> <div id="date" class="caption dateText"></div> <div id="time" class="caption timeText"></div> </div> </div>
+  			<div class="Main"><img src="schedule/black-history-month.png"/></div>
+  			<div class="Period"><div id="schedule-widget"><img id="schedule-period" src=""/></div>
+  			<div class="NDO"><div id="next-day-off"> <h3>NEXT DAY OFF 2/16</h3><p>Winter Recess week of 2/16</p></div></div>
+	 		<div class="Weather"><div class="weather-widget"> <div class="current-weather"> <div class="current-temp" id="current-temp">--°</div> <div class="current-conditions"> <img src="" alt="Weather icon" class="current-icon" id="current-icon"> <div class="current-description" id="current-description">Loading...</div> </div> </div> <div class="forecast"> <div class="forecast-item"> <div class="forecast-time" id="forecast-time-1">--:-- --</div> <img src="" alt="Icon" class="forecast-icon" id="forecast-icon-1"> <div class="forecast-temp" id="forecast-temp-1">--°</div> </div> <div class="forecast-item"> <div class="forecast-time" id="forecast-time-2">--:-- --</div> <img src="" alt="Icon" class="forecast-icon" id="forecast-icon-2"> <div class="forecast-temp" id="forecast-temp-2">--°</div> </div> </div> </div></div>
+			<div class="News"><div id="news-widget"><div id="carousel-content"><div id="loading-message" class="loading">Loading news...</div></div></div></div></div>
+			<div class="P2Gm-logo"><img src="schedule/logo-spot.png"/></div>
+			<div class="Quote"><div align="center"><h1>Education should train the child to use his brains, to make for himself a place in the world and maintain his rights even when it seems that society would shove him into the scrap-heap. -—Helen Keller</h1></div></div>
+			<div class="Time-Date"><div class="time-date"> <div id="day" class="caption dayText"></div> <div id="date" class="caption dateText"></div> <div id="time" class="caption timeText"></div> </div></div>
 		</div>
 	</body>
 	<script>
@@ -307,7 +289,7 @@
 		    if (activePeriod) { statusText = activePeriod.name; } else if (currentMinutes < 480) { statusText = "sched_breakfast.png"; } else if (currentMinutes >= 960) { statusText = "sched_eod.png"; } 
 				var Image_Id = document.getElementById('schedule-period'); var newURL = "https://jpmcdelive.github.io/schedule/"+statusText; console.log("VAR >>)>>"+newURL); Image_Id.src = newURL } 
 			updateSchedule(); setInterval(updateSchedule, 60000);
-	s	// Time & Date
+		// Time & Date
 			var setCaptions=function(){const now=new Date();const timeOptions={hour:'numeric',minute:'2-digit',hour12:true};const formattedTime=new Intl.DateTimeFormat('en-US',timeOptions).format(now);document.getElementById('time').textContent=formattedTime};const now=new Date();const dayOptions={weekday:'long'};document.getElementById('day').textContent=new Intl.DateTimeFormat('en-US',dayOptions).format(now);function getOrdinalDate(date){const day=date.getDate();const s=['th','st','nd','rd'];const v=day%100;return day+(s[(v-20)%10]||s[v]||s[0])}const monthYearOptions={year:'numeric',month:'long'};const monthYear=new Intl.DateTimeFormat('en-US',monthYearOptions).format(now);const fullDateText=monthYear.replace(/\d+/,getOrdinalDate(now));document.getElementById('date').textContent=fullDateText;setCaptions();setInterval(function(){setCaptions()},10*1000);
 		// Weather Widget
 			const weatherApiKey='3705bab40a0bc21845733bbd24c752ba';const unsplashApiKey='VQZFbs5zX4fJECBRq2VN0R9TgBMPOrM7r6d2ZH0qmEs';const city='New York';const iconBaseUrl='https://bmcdn.nl/assets/weather-icons/v3.0/fill/svg/';const defaultIcon='cloudy.svg';const weatherBackgrounds={'clear':'clear sky','clouds':'cloudy sky','rain':'rainy weather','drizzle':'drizzle rain','thunderstorm':'thunderstorm lightning','snow':'snowy landscape','mist':'mist fog','fog':'foggy forest','default':'weather background'};function mapOwmIconToSvg(iconCode){const iconMap={'01d':'clear-day','01n':'clear-night','02d':'partly-cloudy-day','02n':'partly-cloudy-night','03d':'cloudy','03n':'cloudy','04d':'overcast-day','04n':'overcast-night','09d':'drizzle','09n':'drizzle','10d':'partly-cloudy-day-rain','10n':'partly-cloudy-night-rain','11d':'thunderstorms-day-rain','11n':'thunderstorms-night-rain','13d':'partly-cloudy-day-snow','13n':'partly-cloudy-night-snow','50d':'fog-day','50n':'fog-night'};return iconMap[iconCode]||'cloudy'}async function updateBackgroundFromApi(weatherMain){const searchTerm=weatherBackgrounds[weatherMain.toLowerCase()]||weatherBackgrounds['default'];const unsplashApiUrl=`https://api.unsplash.com/photos/random?query=${searchTerm}&client_id=${unsplashApiKey}&orientation=portrait`;const widget=document.querySelector('.weather-widget');try{const response=await fetch(unsplashApiUrl);if(!response.ok){throw new Error(`Unsplash API error! status: ${response.status}`)}const data=await response.json();const imageUrl=data.urls.regular;widget.style.backgroundImage=`linear-gradient(rgba(0,0,0,0.3), rgba(0,0,0,0.3)), url('${imageUrl}')`}catch(error){console.error('Error fetching Unsplash background:',error)}}function setErrorState(){console.error('Error fetching weather data. Setting default state.');document.getElementById('current-description').textContent='Failed to load';document.getElementById('current-temp').textContent='--°';document.getElementById('current-icon').src=iconBaseUrl+defaultIcon;document.getElementById('forecast-time-1').textContent='11:45am';document.getElementById('forecast-temp-1').textContent='--°';document.getElementById('forecast-icon-1').src=iconBaseUrl+defaultIcon;document.getElementById('forecast-time-2').textContent='2:50pm';document.getElementById('forecast-temp-2').textContent='--°';document.getElementById('forecast-icon-2').src=iconBaseUrl+defaultIcon}async function fetchWeather(){const apiUrl=`https://api.openweathermap.org/data/2.5/forecast?q=${city}&appid=${weatherApiKey}&units=imperial`;try{const response=await fetch(apiUrl);if(!response.ok)throw new Error(`HTTP error! status: ${response.status}`);const data=await response.json();const current=data.list[0];const currentIconCode=current.weather[0].icon;const weatherMain=current.weather[0].main;document.getElementById('current-temp').textContent=`${Math.round(current.main.temp)}°`;document.getElementById('current-description').textContent=current.weather[0].description;document.getElementById('current-icon').src=`${iconBaseUrl}${mapOwmIconToSvg(currentIconCode)}.svg`;updateBackgroundFromApi(weatherMain);const timezoneOffset=data.city.timezone;const getLocalHour=(dt)=>{const localTimestamp=(dt+timezoneOffset)*1000;return new Date(localTimestamp).getUTCHours()};const forecast1145=data.list.find(item=>getLocalHour(item.dt)===13);const forecast250=data.list.find(item=>getLocalHour(item.dt)===16);document.getElementById('forecast-time-1').textContent='Lunch';if(forecast1145){const forecast1IconCode=forecast1145.weather[0].icon;document.getElementById('forecast-temp-1').textContent=`${Math.round(forecast1145.main.temp)}°`;document.getElementById('forecast-icon-1').src=`${iconBaseUrl}${mapOwmIconToSvg(forecast1IconCode)}.svg`}else{document.getElementById('forecast-temp-1').textContent='--°';document.getElementById('forecast-icon-1').src=iconBaseUrl+defaultIcon;console.warn('Could not find 1:00 PM (13:00) forecast.')}document.getElementById('forecast-time-2').textContent='Dismissal';if(forecast250){const forecast2IconCode=forecast250.weather[0].icon;document.getElementById('forecast-temp-2').textContent=`${Math.round(forecast250.main.temp)}°`;document.getElementById('forecast-icon-2').src=`${iconBaseUrl}${mapOwmIconToSvg(forecast2IconCode)}.svg`}else{document.getElementById('forecast-temp-2').textContent='--°';document.getElementById('forecast-icon-2').src=iconBaseUrl+defaultIcon;console.warn('Could not find 4:00 PM (16:00) forecast.')}}catch(error){setErrorState()}}document.addEventListener('DOMContentLoaded',()=>{fetchWeather();document.querySelectorAll('img').forEach(img=>{img.addEventListener('error',()=>{img.src=iconBaseUrl+defaultIcon})})});
@@ -316,25 +298,3 @@
 				function renderArticle(index){if(articlesData.length===0)return;const article=articlesData[index];let imageUrl="";let imageAlt="Article image";if(article.multimedia&&article.multimedia.length>0){const image=article.multimedia[2]||article.multimedia[0];imageUrl=image.url;imageAlt=image.caption||article.title}const qrCodeId='article-qr-code-placeholder';carouselContent.innerHTML=`<div class="article-card"><div class="article-content">${imageUrl?`<img src="${imageUrl}" alt="${imageAlt}" class="article-image">`:''}<h3>${article.title}</h3></div></div>`;new QRCode(document.getElementById(qrCodeId),{text:article.url,width:80,height:80,colorDark:"#000000",colorLight:"#ffffff",correctLevel:QRCode.CorrectLevel.M})}async function fetchNews(){try{const response=await fetch(apiUrl);if(!response.ok){if(response.status===401||response.status===403){throw new Error("API Key error. Make sure your key is correct.")}throw new Error(`Network error: ${response.statusText}`)}const data=await response.json();articlesData=data.results.filter(a=>a.title&&a.url&&a.abstract).slice(0,ARTICLE_COUNT);if(articlesData.length===0){throw new Error("No valid articles found.")}loadingMessage.style.display='none';currentIndex=0;renderArticle(currentIndex)}catch(error){console.error("Failed to fetch news:",error);loadingMessage.textContent=`Failed to load news. ${error.message}`;loadingMessage.className='error'}}nextArticle=function(){currentIndex=(currentIndex+1)%articlesData.length;renderArticle(currentIndex)};setInterval(nextArticle,10000);document.addEventListener('DOMContentLoaded',fetchNews);
 	</script>
 </html>
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-

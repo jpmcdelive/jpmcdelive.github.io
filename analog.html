@@ -222,38 +222,117 @@
 			div img {
 				width: 100%;
 			}
-.container {  display: grid;
-  grid-template-columns: 1fr 1fr 1fr 1fr 1fr;
-  grid-template-rows: 1fr 1fr 1fr 1fr 1fr;
-  gap: 2px 5px;
-  grid-auto-flow: row;
-  grid-template-areas:
-    "Main Main Main Main P2Gm logo"
-    "Main Main Main Main Period"
-    "Main Main Main Main NDO"
-    "Main Main Main Main News"
-    "Season Quote Quote Quote Time-Date";
+.grid-container {
+  display: grid;
+  grid-template-columns: repeat(5, 1fr);
+  grid-template-rows: repeat(5, 1fr);
+  gap: 2px 2px;
 }
 
-.Main { grid-area: Main; }
+.grid-item {
+  border-radius: 4px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: white;
+  font-weight: 600;
+}
 
-.P2Gm-logo { grid-area: P2Gm-logo; }
+.item-1 {
+  grid-column: 1 / 5;
+  grid-row: 1 / 5;
+  background-color: #3b82f6;
+}
 
-.Period { grid-area: Period; }
+.item-2 {
+  grid-column: 5 / 6;
+  grid-row: 1 / 2;
+  background-color: #ef4444;
+}
 
-.NDO { grid-area: NDO; }
+.item-3 {
+  grid-column: 5 / 6;
+  grid-row: 2 / 3;
+  background-color: #10b981;
+}
 
-.News { grid-area: News; }
+.item-4 {
+  grid-column: 5 / 6;
+  grid-row: 3 / 4;
+  background-color: #f59e0b;
+}
 
-.Time-Date { grid-area: Time-Date; }
+.item-5 {
+  grid-column: 5 / 6;
+  grid-row: 4 / 5;
+  background-color: #8b5cf6;
+}
 
-.Quote { grid-area: Quote; }
+.item-6 {
+  grid-column: 1 / 2;
+  grid-row: 5 / 6;
+  background-color: #06b6d4;
+}
 
-.Season { grid-area: Season; }
+.item-7 {
+  grid-column: 2 / 5;
+  grid-row: 5 / 6;
+  background-color: #f97316;
+}
 
+.item-8 {
+  grid-column: 5 / 6;
+  grid-row: 5 / 6;
+  background-color: #84cc16;
+}
+
+/* Tablet styles */
+@media (max-width: 1024px) {
+  .grid-container {
+    grid-template-columns: repeat(5, 1fr);
+    grid-template-rows: repeat(5, 1fr);
+    gap: 2px 2px;
+  }
+}
+
+/* Mobile styles */
+@media (max-width: 640px) {
+  .grid-container {
+    grid-template-columns: repeat(5, 1fr);
+    grid-template-rows: repeat(5, 1fr);
+    gap: 2px 2px;
+  }
+}
 </style>
 </head>	
 	<body> 
+		<div class="grid-container">
+  <div class="grid-item item-1">
+    Item 1
+  </div>
+  <div class="grid-item item-2">
+    Item 2
+  </div>
+  <div class="grid-item item-3">
+    Item 3
+  </div>
+  <div class="grid-item item-4">
+    Item 4
+  </div>
+  <div class="grid-item item-5">
+    Item 5
+  </div>
+  <div class="grid-item item-6">
+    Item 6
+  </div>
+  <div class="grid-item item-7">
+    Item 7
+  </div>
+  <div class="grid-item item-8">
+    Item 8
+  </div>
+</div>
+		<!--
 		<div class="container">
   			<div class="Main"><img src="schedule/black-history-month.png"/></div>
   			<div class="Period"><div id="schedule-widget"><img id="schedule-period" src=""/></div>
@@ -263,7 +342,7 @@
 			<div class="P2Gm-logo"><img src="schedule/logo-spot.png"/></div>
 			<div class="Quote"><div align="center"><h1>Education should train the child to use his brains, to make for himself a place in the world and maintain his rights even when it seems that society would shove him into the scrap-heap. -—Helen Keller</h1></div></div>
 			<div class="Time-Date"><div class="time-date"> <div id="day" class="caption dayText"></div> <div id="date" class="caption dateText"></div> <div id="time" class="caption timeText"></div> </div></div>
-		</div>
+		</div> -->
 	</body>
 	<script>
 		// PERIOD WIDGET
@@ -292,4 +371,5 @@
 											  }async function fetchNews(){try{const response=await fetch(apiUrl);if(!response.ok){if(response.status===401||response.status===403){throw new Error("API Key error. Make sure your key is correct.")}throw new Error(`Network error: ${response.statusText}`)}const data=await response.json();articlesData=data.results.filter(a=>a.title&&a.url&&a.abstract).slice(0,ARTICLE_COUNT);if(articlesData.length===0){throw new Error("No valid articles found.")}loadingMessage.style.display='none';currentIndex=0;renderArticle(currentIndex)}catch(error){console.error("Failed to fetch news:",error);loadingMessage.textContent=`Failed to load news. ${error.message}`;loadingMessage.className='error'}}nextArticle=function(){currentIndex=(currentIndex+1)%articlesData.length;renderArticle(currentIndex)};setInterval(nextArticle,10000);document.addEventListener('DOMContentLoaded',fetchNews);
 	</script>
 </html>
+
 

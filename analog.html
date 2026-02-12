@@ -224,8 +224,8 @@
 			}
 .grid-container {
   display: grid;
-  grid-template-columns: repeat(5, 1fr);
-  grid-template-rows: repeat(5, 1fr);
+  grid-template-columns: repeat(1fr, 1fr, 1fr, 1fr, auto);
+  grid-template-rows: repeat(1fr, 1fr, 1fr, 1fr, 1fr );
   gap: 2px 2px;
 }
 
@@ -381,6 +381,7 @@
 											  }async function fetchNews(){try{const response=await fetch(apiUrl);if(!response.ok){if(response.status===401||response.status===403){throw new Error("API Key error. Make sure your key is correct.")}throw new Error(`Network error: ${response.statusText}`)}const data=await response.json();articlesData=data.results.filter(a=>a.title&&a.url&&a.abstract).slice(0,ARTICLE_COUNT);if(articlesData.length===0){throw new Error("No valid articles found.")}loadingMessage.style.display='none';currentIndex=0;renderArticle(currentIndex)}catch(error){console.error("Failed to fetch news:",error);loadingMessage.textContent=`Failed to load news. ${error.message}`;loadingMessage.className='error'}}nextArticle=function(){currentIndex=(currentIndex+1)%articlesData.length;renderArticle(currentIndex)};setInterval(nextArticle,10000);document.addEventListener('DOMContentLoaded',fetchNews);
 	</script>
 </html>
+
 
 
 

@@ -1,55 +1,124 @@
 <!DOCTYPE html>
 <html lang="en">
-	<head> 
-		<meta charset="UTF-R"><meta name="viewport" content="width=device-width, initial-scale=1.0"><title>P2Gm Digital Signage @ The Manhattan Hub</title>
-		<script src="https://cdn.jsdelivr.net/npm/qrcodejs@1.0.0/qrcode.min.js"></script>
-		<link href="https://fonts.googleapis.com/css2?family=Fira+Sans:ital,wght@0,100;0,400;0,900;1,400;1,900&display=swap" rel="stylesheet">
-		<style>
-			body{font-family:"Fira Sans",sans-serif;font-weight:400;font-style:normal;background-color:#000;color:#fff;margin:0;width:240px}.weather-widget{background:linear-gradient(rgba(0,0,0,.3),rgba(0,0,0,.3)),url('https://images.unsplash.com/photo-1534088563585-c3E806f153d8?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=MnwzODU4MjZ8MHwxfHJhbmRvbXx8fHx8fHx8fDE2NzM0MjYxNTE&ixlib=rb-4.0.3&q=80&w=400') no-repeat center center/cover;color:white;border-radius:0;width:240px;box-shadow:0 4px 12px rgba(0,0,0,.1);transition:background-image .5s ease-in-out}.current-weather{display:flex;width:240px;margin-bottom:15px}.current-temp{font-size:3.5rem;font-weight:600;line-height:1;padding:10px 0 0 30px}.current-conditions{text-align:center;padding:0 41px 0 0}.current-icon{width:80px;height:80px}.current-description{font-size:.9rem;margin-top:-5px;text-transform:capitalize}.forecast{display:flex;justify-content:space-between;padding:0 50px 10px}.forecast-item{display:flex;flex-direction:column;align-items:center;font-size:.9rem;padding:0 20px}.forecast-time{font-weight:500;margin-bottom:0}.forecast-icon{width:40px;height:40px}.forecast-temp{font-size:1.1rem;font-weight:500;margin-top:0}#news-widget{width:240px;background-color:#fff;border-radius:0;box-shadow:0 4px 12px rgba(0,0,0,.05);overflow:hidden;padding-bottom:10px;margin-bottom:3px;min-height:410px}header{padding:16px 20px;border-bottom:1px solid #eee;background-color:#fafafa}header h2{margin:0;font-size:20px}#carousel-content{padding:0!important}.article-card{display:flex;gap:15px;animation:fadeIn .4s ease-out}.article-image{width:240px;height:160px;object-fit:cover;border-radius:0;flex-shrink:0}.article-content{flex-grow:1;min-width:0}.article-content h3{margin:0 0 5px 0;font-size:18px;color:black;padding:0 8px;font-weight:600}.article-content a{text-decoration:none;color:#121212}.article-content a:hover{text-decoration:underline}.article-content p{margin:0 0 8px 0;padding:0 8px;font-size:14px;color:#555;display:-webkit-box;-webkit-line-clamp:4;-webkit-box-orient:vertical;overflow:hidden}.article-qrcode{width:90px;height:90px;flex-shrink:0}.article-qrcode canvas,.article-qrcode img{padding:4px 5px 25px 7px;background:#fff;}#carousel-nav{display:flex;justify-content:space-between;align-items:center;padding:10px 20px;border-top:1px solid #eee;background-color:#fafafa}#carousel-nav button{background-color:#007aff;color:white;border:none;padding:8px 14px;border-radius:5px;font-size:14px;font-weight:500;cursor:pointer}.time-date{text-align:center;background:#333;margin:2px 0 3px;padding-bottom:10px}#day{font-size:2.5em;font-weight:100;line-height:1.3}#date{font-size:1.2em;font-weight:400;line-height:.7}#time{font-size:3.5em;line-height:1;font-weight:900}#next-day-off{background:#444;margin:3px 0;text-align:center;padding:7px 0}#next-day-off h3{margin-bottom:0;margin-top:4px}#next-day-off p{margin:0}#carousel-nav button:hover{background-color:#0056b3}#carousel-nav button:disabled{background-color:#ccc;cursor:not-allowed}#slide-indicator{font-size:14px;color:#555;font-weight:500}.loading,.error{text-align:center;padding:40px;font-size:16px;color:#777}@keyframes fadeIn{from{opacity:0;transform:translateY(0)}to{opacity:1;transform:translateY(0)}}		
-			.article-content h3 { display: -webkit-box; -webkit-line-clamp: 3; -webkit-box-orient: vertical; overflow: hidden; min-height: 65px; max-height: 82px; }
-			.article-content p {  display: -webkit-box; -webkit-line-clamp: 4; -webkit-box-orient: vertical; overflow: hidden; min-height: 65px; max-height: 82px; }
-			#schedule-widget { font-family:"Fira Sans",sans-serif;font-weight:400; display: flex; justify-content: center; align-items: center; margin: 3px 0; background-color: peachpuff; text-align: center; }
-			#schedule-period { font-size: 1.7rem; text-transform: uppercase; color: #555; width:240px; }
-		</style>
-	</head>	
-	<body> 
-        <div style="display: inline;">
-            <iframe src="https://docs.google.com/presentation/d/e/2PACX-1vQWXDRIFMnoveX4e6PTyx4wnFeBTP0GWQ-wRZYcOW-K7Q5wzOUROQ6OQF9kgnM6KgPwLtGXOwC7ztUM/pubembed?start=false&loop=false&delayms=3000" frameborder="0" width="960" height="569" allowfullscreen="true" mozallowfullscreen="true" webkitallowfullscreen="true"></iframe>
+<head>
+    <meta charset="UTF-8">
+    <title>Midtown Manhattan Weather</title>
+    <style>
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+            background: #121212;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+            margin: 0;
+        }
+
+        .weather-card {
+            background: #1e1e1e;
+            color: white;
+            padding: 2.5rem;
+            border-radius: 30px;
+            width: 320px;
+            text-align: center;
+            box-shadow: 0 10px 50px rgba(0,0,0,0.5);
+            border: 1px solid rgba(255,255,255,0.1);
+        }
+
+        .location { font-weight: 300; font-size: 0.9rem; text-transform: uppercase; letter-spacing: 2px; color: #aaa; }
+        .temp { font-size: 4.5rem; font-weight: 700; margin: 0.5rem 0; }
+        .description { font-size: 1.1rem; color: #4facfe; margin-bottom: 1.5rem; text-transform: capitalize; }
+
+        #icon-container {
+            width: 140px;
+            height: 140px;
+            margin: 0 auto;
+        }
+
+        #icon-container img { width: 100%; height: 100%; }
+
+        .details {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            margin-top: 2rem;
+            padding-top: 1.5rem;
+            border-top: 1px solid rgba(255,255,255,0.1);
+        }
+
+        .detail-item span { display: block; }
+        .val { font-weight: 600; font-size: 1.1rem; }
+        .lbl { font-size: 0.75rem; color: #777; margin-top: 4px; }
+    </style>
+</head>
+<body>
+
+<div class="weather-card">
+    <div class="location">Midtown, NYC</div>
+    <div id="icon-container">
         </div>
-		<div style="display: inline;">
-		<!-- TIME --> 
-			<div class="time-date"> <div id="day" class="caption dayText"></div> <div id="date" class="caption dateText"></div> <div id="time" class="caption timeText"></div> </div>
-	    <!-- PERIOD -->
-			<div id="schedule-widget"><img id="schedule-period" src=""/></div>
-		<!-- WEATHER -->
-		    <div class="weather-widget"> <div class="current-weather"> <div class="current-temp" id="current-temp">--°</div> <div class="current-conditions"> <img src="" alt="Weather icon" class="current-icon" id="current-icon"> <div class="current-description" id="current-description">Loading...</div> </div> </div> <div class="forecast"> <div class="forecast-item"> <div class="forecast-time" id="forecast-time-1">--:-- --</div> <img src="" alt="Icon" class="forecast-icon" id="forecast-icon-1"> <div class="forecast-temp" id="forecast-temp-1">--°</div> </div> <div class="forecast-item"> <div class="forecast-time" id="forecast-time-2">--:-- --</div> <img src="" alt="Icon" class="forecast-icon" id="forecast-icon-2"> <div class="forecast-temp" id="forecast-temp-2">--°</div> </div> </div> </div>
-	    <!-- NEXT DAY OFF -->
-		   	<div id="next-day-off"> <h3>NEXT DAY OFF 12/24</h3><p>Christmas Break</p></div>
-	    <!-- NEWS -->
-		   	<div id="news-widget"><div id="carousel-content"><div id="loading-message" class="loading">Loading news...</div></div></div>
-		</div>
-	</body>
-	<script>
-		// PERIOD WIDGET
-			function updateSchedule() { const now = new Date(); const currentMinutes = (now.getHours() * 60) + now.getMinutes(); let statusText = "Free Time"; const schedule = [
-		      { name: "sched_breakfast.png",   	start: 480, end: 530 }, // 8:00 - 8:50
-		      { name: "sched_period1.png",      start: 530, end: 580 }, // 8:50 - 9:40
-		      { name: "sched_period2.png",      start: 580, end: 632 }, // 9:40 - 10:32
-		      { name: "sched_period3.png",      start: 632, end: 686 }, // 10:32 - 11:24
-		      { name: "sched_lunch.png",        start: 686, end: 738 }, // 11:26 - 12:18
-		      { name: "sched_period5.png",      start: 738, end: 788 }, // 12:18 - 1:08 (13:08)
-		      { name: "sched_eod.png",   	start: 788, end: 840 }, // 1:08 - 2:00 (14:00)
-		      { name: "sched_eod.png",		start: 840, end: 890 }, // 2:00 - 2:50 (14:50)
-		      { name: "sched_eod.png", 		start: 890, end: 960 }  // 2:50 - 4:00 (16:00)
-		    ]; const activePeriod = schedule.find(p => currentMinutes >= p.start && currentMinutes < p.end);
-		    if (activePeriod) { statusText = activePeriod.name; } else if (currentMinutes < 480) { statusText = "sched_breakfast.png"; } else if (currentMinutes >= 960) { statusText = "sched_eod.png"; } 
-				var Image_Id = document.getElementById('schedule-period'); var newURL = "https://jpmcdelive.github.io/schedule/"+statusText; console.log("VAR >>)>>"+newURL); Image_Id.src = newURL } 
-			updateSchedule(); setInterval(updateSchedule, 60000);
-		// Time & Date
-			var setCaptions=function(){const now=new Date();const timeOptions={hour:'numeric',minute:'2-digit',hour12:true};const formattedTime=new Intl.DateTimeFormat('en-US',timeOptions).format(now);document.getElementById('time').textContent=formattedTime};const now=new Date();const dayOptions={weekday:'long'};document.getElementById('day').textContent=new Intl.DateTimeFormat('en-US',dayOptions).format(now);function getOrdinalDate(date){const day=date.getDate();const s=['th','st','nd','rd'];const v=day%100;return day+(s[(v-20)%10]||s[v]||s[0])}const monthYearOptions={year:'numeric',month:'long'};const monthYear=new Intl.DateTimeFormat('en-US',monthYearOptions).format(now);const fullDateText=monthYear.replace(/\d+/,getOrdinalDate(now));document.getElementById('date').textContent=fullDateText;setCaptions();setInterval(function(){setCaptions()},10*1000);
-		// Weather Widget
-			const weatherApiKey='3705bab40a0bc21845733bbd24c752ba';const unsplashApiKey='VQZFbs5zX4fJECBRq2VN0R9TgBMPOrM7r6d2ZH0qmEs';const city='New York';const iconBaseUrl='https://bmcdn.nl/assets/weather-icons/v3.0/fill/svg/';const defaultIcon='cloudy.svg';const weatherBackgrounds={'clear':'clear sky','clouds':'cloudy sky','rain':'rainy weather','drizzle':'drizzle rain','thunderstorm':'thunderstorm lightning','snow':'snowy landscape','mist':'mist fog','fog':'foggy forest','default':'weather background'};function mapOwmIconToSvg(iconCode){const iconMap={'01d':'clear-day','01n':'clear-night','02d':'partly-cloudy-day','02n':'partly-cloudy-night','03d':'cloudy','03n':'cloudy','04d':'overcast-day','04n':'overcast-night','09d':'drizzle','09n':'drizzle','10d':'partly-cloudy-day-rain','10n':'partly-cloudy-night-rain','11d':'thunderstorms-day-rain','11n':'thunderstorms-night-rain','13d':'partly-cloudy-day-snow','13n':'partly-cloudy-night-snow','50d':'fog-day','50n':'fog-night'};return iconMap[iconCode]||'cloudy'}async function updateBackgroundFromApi(weatherMain){const searchTerm=weatherBackgrounds[weatherMain.toLowerCase()]||weatherBackgrounds['default'];const unsplashApiUrl=`https://api.unsplash.com/photos/random?query=${searchTerm}&client_id=${unsplashApiKey}&orientation=portrait`;const widget=document.querySelector('.weather-widget');try{const response=await fetch(unsplashApiUrl);if(!response.ok){throw new Error(`Unsplash API error! status: ${response.status}`)}const data=await response.json();const imageUrl=data.urls.regular;widget.style.backgroundImage=`linear-gradient(rgba(0,0,0,0.3), rgba(0,0,0,0.3)), url('${imageUrl}')`}catch(error){console.error('Error fetching Unsplash background:',error)}}function setErrorState(){console.error('Error fetching weather data. Setting default state.');document.getElementById('current-description').textContent='Failed to load';document.getElementById('current-temp').textContent='--°';document.getElementById('current-icon').src=iconBaseUrl+defaultIcon;document.getElementById('forecast-time-1').textContent='11:45am';document.getElementById('forecast-temp-1').textContent='--°';document.getElementById('forecast-icon-1').src=iconBaseUrl+defaultIcon;document.getElementById('forecast-time-2').textContent='2:50pm';document.getElementById('forecast-temp-2').textContent='--°';document.getElementById('forecast-icon-2').src=iconBaseUrl+defaultIcon}async function fetchWeather(){const apiUrl=`https://api.openweathermap.org/data/2.5/forecast?q=${city}&appid=${weatherApiKey}&units=imperial`;try{const response=await fetch(apiUrl);if(!response.ok)throw new Error(`HTTP error! status: ${response.status}`);const data=await response.json();const current=data.list[0];const currentIconCode=current.weather[0].icon;const weatherMain=current.weather[0].main;document.getElementById('current-temp').textContent=`${Math.round(current.main.temp)}°`;document.getElementById('current-description').textContent=current.weather[0].description;document.getElementById('current-icon').src=`${iconBaseUrl}${mapOwmIconToSvg(currentIconCode)}.svg`;updateBackgroundFromApi(weatherMain);const timezoneOffset=data.city.timezone;const getLocalHour=(dt)=>{const localTimestamp=(dt+timezoneOffset)*1000;return new Date(localTimestamp).getUTCHours()};const forecast1145=data.list.find(item=>getLocalHour(item.dt)===13);const forecast250=data.list.find(item=>getLocalHour(item.dt)===16);document.getElementById('forecast-time-1').textContent='Lunch';if(forecast1145){const forecast1IconCode=forecast1145.weather[0].icon;document.getElementById('forecast-temp-1').textContent=`${Math.round(forecast1145.main.temp)}°`;document.getElementById('forecast-icon-1').src=`${iconBaseUrl}${mapOwmIconToSvg(forecast1IconCode)}.svg`}else{document.getElementById('forecast-temp-1').textContent='--°';document.getElementById('forecast-icon-1').src=iconBaseUrl+defaultIcon;console.warn('Could not find 1:00 PM (13:00) forecast.')}document.getElementById('forecast-time-2').textContent='Dismissal';if(forecast250){const forecast2IconCode=forecast250.weather[0].icon;document.getElementById('forecast-temp-2').textContent=`${Math.round(forecast250.main.temp)}°`;document.getElementById('forecast-icon-2').src=`${iconBaseUrl}${mapOwmIconToSvg(forecast2IconCode)}.svg`}else{document.getElementById('forecast-temp-2').textContent='--°';document.getElementById('forecast-icon-2').src=iconBaseUrl+defaultIcon;console.warn('Could not find 4:00 PM (16:00) forecast.')}}catch(error){setErrorState()}}document.addEventListener('DOMContentLoaded',()=>{fetchWeather();document.querySelectorAll('img').forEach(img=>{img.addEventListener('error',()=>{img.src=iconBaseUrl+defaultIcon})})});
-		// News Widget 
-			const NYT_API_KEY="fA2AACnKOZWVnU8C0kcCLkivelqlxDQc";const NYT_SECTION="home";const ARTICLE_COUNT=3;let articlesData=[];let currentIndex=0;const carouselContent=document.getElementById('carousel-content');const loadingMessage=document.getElementById('loading-message');const navContainer=document.getElementById('carousel-nav');const prevBtn=document.getElementById('prev-btn');const nextBtn=document.getElementById('next-btn');const slideIndicator=document.getElementById('slide-indicator');const apiUrl=`https://api.nytimes.com/svc/topstories/v2/${NYT_SECTION}.json?api-key=${NYT_API_KEY}`;function renderArticle(index){if(articlesData.length===0)return;const article=articlesData[index];let imageUrl="";let imageAlt="Article image";if(article.multimedia&&article.multimedia.length>0){const image=article.multimedia[2]||article.multimedia[0];imageUrl=image.url;imageAlt=image.caption||article.title}const qrCodeId='article-qr-code-placeholder';carouselContent.innerHTML=`<div class="article-card"><div class="article-content">${imageUrl?`<img src="${imageUrl}" alt="${imageAlt}" class="article-image">`:''}<h3>${article.title}</h3><p>${article.abstract}</p><div class="article-qrcode" id="${qrCodeId}"></div></div></div>`;new QRCode(document.getElementById(qrCodeId),{text:article.url,width:80,height:80,colorDark:"#000000",colorLight:"#ffffff",correctLevel:QRCode.CorrectLevel.M})}async function fetchNews(){try{const response=await fetch(apiUrl);if(!response.ok){if(response.status===401||response.status===403){throw new Error("API Key error. Make sure your key is correct.")}throw new Error(`Network error: ${response.statusText}`)}const data=await response.json();articlesData=data.results.filter(a=>a.title&&a.url&&a.abstract).slice(0,ARTICLE_COUNT);if(articlesData.length===0){throw new Error("No valid articles found.")}loadingMessage.style.display='none';currentIndex=0;renderArticle(currentIndex)}catch(error){console.error("Failed to fetch news:",error);loadingMessage.textContent=`Failed to load news. ${error.message}`;loadingMessage.className='error'}}nextArticle=function(){currentIndex=(currentIndex+1)%articlesData.length;renderArticle(currentIndex)};setInterval(nextArticle,10000);document.addEventListener('DOMContentLoaded',fetchNews);
-	</script>
+    <div class="temp" id="temp">--°</div>
+    <div class="description" id="desc">Loading...</div>
+    
+    <div class="details">
+        <div class="detail-item">
+            <span class="val" id="humidity">--%</span>
+            <span class="lbl">HUMIDITY</span>
+        </div>
+        <div class="detail-item">
+            <span class="val" id="wind">-- mph</span>
+            <span class="lbl">WIND</span>
+        </div>
+    </div>
+</div>
+
+<script>
+    // 1. ADD YOUR KEY HERE
+    const apiKey = '3705bab40a0bc21845733bbd24c752ba'; 
+    const lat = 40.7549;
+    const lon = -73.9840;
+
+    async function updateWeather() {
+        try {
+            const res = await fetch(`https://api.openweathermap.org/data/2.5/weather?lat=${lat}&lon=${lon}&units=imperial&appid=${apiKey}`);
+            const data = await res.json(); // Fixed the syntax error here
+            
+            document.getElementById('temp').innerText = `${Math.round(data.main.temp)}°`;
+            document.getElementById('desc').innerText = data.weather[0].description;
+            document.getElementById('humidity').innerText = `${data.main.humidity}%`;
+            document.getElementById('wind').innerText = `${Math.round(data.wind.speed)} mph`;
+
+            const iconCode = data.weather[0].icon;
+            const iconContainer = document.getElementById('icon-container');
+            
+            // Reliable GitHub CDN for amCharts animated icons
+            const baseUrl = "https://raw.githubusercontent.com/bramkragten/weather-card/master/icons/animated/";
+            
+            const mapping = {
+                '01d': 'day.svg',
+                '01n': 'night.svg',
+                '02d': 'cloudy-day-1.svg',
+                '02n': 'cloudy-night-1.svg',
+                '03d': 'cloudy.svg',
+                '03n': 'cloudy.svg',
+                '04d': 'cloudy.svg',
+                '04n': 'cloudy.svg',
+                '09d': 'rainy-6.svg',
+                '10d': 'rainy-1.svg',
+                '11d': 'thunder.svg',
+                '13d': 'snowy-6.svg',
+                '50d': 'cloudy.svg'
+            };
+
+            const fileName = mapping[iconCode] || 'day.svg';
+            iconContainer.innerHTML = `<img src="${baseUrl}${fileName}" alt="weather">`;
+
+        } catch (err) {
+            console.error(err);
+            document.getElementById('desc').innerText = "Update API Key";
+        }
+    }
+
+    updateWeather();
+</script>
+</body>
 </html>

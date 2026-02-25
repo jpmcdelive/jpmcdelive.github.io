@@ -27,15 +27,14 @@
 	<script>
 		// PERIOD WIDGET
 			function updateSchedule() { const now = new Date(); const currentMinutes = (now.getHours() * 60) + now.getMinutes(); let statusText = "Free Time"; const schedule = [
-		      { name: "sched_breakfast.png",   	start: 480, end: 530 }, // 8:00 - 8:50
-		      { name: "sched_period1.png",      start: 530, end: 580 }, // 8:50 - 9:40
-		      { name: "sched_period2.png",      start: 580, end: 632 }, // 9:40 - 10:32
-		      { name: "sched_period3.png",      start: 632, end: 686 }, // 10:32 - 11:24
-		      { name: "sched_lunch.png",        start: 686, end: 738 }, // 11:26 - 12:18
-		      { name: "sched_period5.png",      start: 738, end: 788 }, // 12:18 - 1:08 (13:08)
-		      { name: "sched_eod.png",   	start: 788, end: 840 }, // 1:08 - 2:00 (14:00)
-		      { name: "sched_eod.png",		start: 840, end: 890 }, // 2:00 - 2:50 (14:50)
-		      { name: "sched_eod.png", 		start: 890, end: 960 }  // 2:50 - 4:00 (16:00)
+		      { name: "bk.png",      start: 530, end: 580 }, // 8:50 - 9:40
+		      { name: "p2.png",      start: 580, end: 632 }, // 9:40 - 10:32
+		      { name: "p3.png",      start: 632, end: 686 }, // 10:32 - 11:24
+		      { name: "lc.png",        start: 686, end: 738 }, // 11:26 - 12:18
+		      { name: "p5.png",      start: 738, end: 788 }, // 12:18 - 1:08 (13:08)
+		      { name: "p6.png",   	start: 788, end: 840 }, // 1:08 - 2:00 (14:00)
+		      { name: "p7.png",		start: 840, end: 890 }, // 2:00 - 2:50 (14:50)
+		      { name: "cl.png", 		start: 890, end: 960 }  // 2:50 - 4:00 (16:00)
 		    ]; const activePeriod = schedule.find(p => currentMinutes >= p.start && currentMinutes < p.end);
 		    if (activePeriod) { statusText = activePeriod.name; } else if (currentMinutes < 480) { statusText = "sched_breakfast.png"; } else if (currentMinutes >= 960) { statusText = "sched_eod.png"; } 
 				var Image_Id = document.getElementById('schedule-period'); var newURL = "https://jpmcdelive.github.io/schedule/"+statusText; console.log("VAR >>)>>"+newURL); Image_Id.src = newURL } 

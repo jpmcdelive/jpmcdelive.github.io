@@ -1,7 +1,7 @@
 <!DOCTYPE html>
 <html lang="en">
 	<head> 
-		<meta charset="UTF-R"><meta name="viewport" content="width=device-width, initial-scale=1.0"><title>P2Gm Digital Signage @ The Manhattan Hub</title>
+		<meta charset="UTF-8"><meta name="viewport" content="width=device-width, initial-scale=1.0"><title>P2Gm Digital Signage @ The Manhattan Hub</title>
 		<script src="https://cdn.jsdelivr.net/npm/qrcodejs@1.0.0/qrcode.min.js"></script>
 		<link href="https://fonts.googleapis.com/css2?family=Fira+Sans:ital,wght@0,100;0,400;0,900;1,400;1,900&display=swap" rel="stylesheet">
 		<style>
@@ -9,18 +9,18 @@
 			.article-content h3 { display: -webkit-box; -webkit-line-clamp: 3; -webkit-box-orient: vertical; overflow: hidden; min-height: 65px; max-height: 82px; }
 			.article-content p {  display: -webkit-box; -webkit-line-clamp: 4; -webkit-box-orient: vertical; overflow: hidden; min-height: 65px; max-height: 82px; }
 			#schedule-widget { font-family:"Fira Sans",sans-serif;font-weight:400; display: flex; justify-content: center; align-items: center; margin: 3px 0; background-color: peachpuff; text-align: center; }
-			#current-period { font-size: 1.7rem; text-transform: uppercase; color: #555; }
+			#schedule-period { font-size: 1.7rem; text-transform: uppercase; color: #555; width:240px; }
 		</style>
 	</head>	
 	<body> 
 		<!-- TIME --> 
 			<div class="time-date"> <div id="day" class="caption dayText"></div> <div id="date" class="caption dateText"></div> <div id="time" class="caption timeText"></div> </div>
 	    <!-- PERIOD -->
-			<div id="schedule-widget"><img id="current-period" src=""/></div>
+			<div id="schedule-widget"><img id="schedule-period" src=""/></div>
 		<!-- WEATHER -->
 		    <div class="weather-widget"> <div class="current-weather"> <div class="current-temp" id="current-temp">--°</div> <div class="current-conditions"> <img src="" alt="Weather icon" class="current-icon" id="current-icon"> <div class="current-description" id="current-description">Loading...</div> </div> </div> <div class="forecast"> <div class="forecast-item"> <div class="forecast-time" id="forecast-time-1">--:-- --</div> <img src="" alt="Icon" class="forecast-icon" id="forecast-icon-1"> <div class="forecast-temp" id="forecast-temp-1">--°</div> </div> <div class="forecast-item"> <div class="forecast-time" id="forecast-time-2">--:-- --</div> <img src="" alt="Icon" class="forecast-icon" id="forecast-icon-2"> <div class="forecast-temp" id="forecast-temp-2">--°</div> </div> </div> </div>
 	    <!-- NEXT DAY OFF -->
-		   	<div id="next-day-off"> <h3>NEXT DAY OFF 12/24</h3><p>Christmas Break</p></div>
+		   	<div id="next-day-off"> <h3>NEXT DAY OFF 2/16</h3><p>Winter Recess week of 2/16</p></div>
 	    <!-- NEWS -->
 		   	<div id="news-widget"><div id="carousel-content"><div id="loading-message" class="loading">Loading news...</div></div></div>
 	</body>
@@ -37,8 +37,8 @@
 		      { name: "sched_eod.png",		start: 840, end: 890 }, // 2:00 - 2:50 (14:50)
 		      { name: "sched_eod.png", 		start: 890, end: 960 }  // 2:50 - 4:00 (16:00)
 		    ]; const activePeriod = schedule.find(p => currentMinutes >= p.start && currentMinutes < p.end);
-		    if (activePeriod) { statusText = activePeriod.name; } else if (currentMinutes < 480) { statusText = "sched_goodmorning.png"; } else if (currentMinutes >= 960) { statusText = "sched_closed.png"; } 
-				var Image_Id = document.getElementById('current-period'); var newURL = "https://jpmcdelive.github.io/schedule/"+statusText; console.log(newURL); Image_Id.src = newURL } 
+		    if (activePeriod) { statusText = activePeriod.name; } else if (currentMinutes < 480) { statusText = "sched_breakfast.png"; } else if (currentMinutes >= 960) { statusText = "sched_eod.png"; } 
+				var Image_Id = document.getElementById('schedule-period'); var newURL = "https://jpmcdelive.github.io/schedule/"+statusText; console.log("VAR >>)>>"+newURL); Image_Id.src = newURL } 
 			updateSchedule(); setInterval(updateSchedule, 60000);
 		// Time & Date
 			var setCaptions=function(){const now=new Date();const timeOptions={hour:'numeric',minute:'2-digit',hour12:true};const formattedTime=new Intl.DateTimeFormat('en-US',timeOptions).format(now);document.getElementById('time').textContent=formattedTime};const now=new Date();const dayOptions={weekday:'long'};document.getElementById('day').textContent=new Intl.DateTimeFormat('en-US',dayOptions).format(now);function getOrdinalDate(date){const day=date.getDate();const s=['th','st','nd','rd'];const v=day%100;return day+(s[(v-20)%10]||s[v]||s[0])}const monthYearOptions={year:'numeric',month:'long'};const monthYear=new Intl.DateTimeFormat('en-US',monthYearOptions).format(now);const fullDateText=monthYear.replace(/\d+/,getOrdinalDate(now));document.getElementById('date').textContent=fullDateText;setCaptions();setInterval(function(){setCaptions()},10*1000);

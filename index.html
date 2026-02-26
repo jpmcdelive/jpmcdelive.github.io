@@ -36,7 +36,7 @@
 		      { name: "p7.png",		start: 840, end: 890 }, // 2:00 - 2:50 (14:50)
 		      { name: "cl.png", 		start: 890, end: 960 }  // 2:50 - 4:00 (16:00)
 		    ]; const activePeriod = schedule.find(p => currentMinutes >= p.start && currentMinutes < p.end);
-		    if (activePeriod) { statusText = activePeriod.name; } else if (currentMinutes < 480) { statusText = "sched_breakfast.png"; } else if (currentMinutes >= 960) { statusText = "sched_eod.png"; } 
+		    if (activePeriod) { statusText = activePeriod.name; } else if (currentMinutes < 480) { statusText = "bk.png"; } else if (currentMinutes >= 960) { statusText = "cl.png"; } 
 				var Image_Id = document.getElementById('schedule-period'); var newURL = "https://jpmcdelive.github.io/schedule/"+statusText; console.log("VAR >>)>>"+newURL); Image_Id.src = newURL } 
 			updateSchedule(); setInterval(updateSchedule, 60000);
 		// Time & Date

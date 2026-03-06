@@ -2,6 +2,7 @@
 <html lang="en">
 	<head> 
 		<meta charset="UTF-8"><meta name="viewport" content="width=device-width, initial-scale=1.0"><title>P2Gm Digital Signage @ The Manhattan Hub</title>
+		<meta>https://www.flaticon.com/free-animated-icons/summer" title="summer animated icons">Summer animated icons created by Freepik - Flaticon</meta>
 		<link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin><link href="https://fonts.googleapis.com/css2?family=Fira+Sans+Condensed:ital,wght@0,100;0,200;0,300;0,400;0,500;0,600;0,700;0,800;1,100;1,200;1,300;1,400;1,500;1,600;1,700;1,800&display=swap" rel="stylesheet">
 		<style>
 			html{ font-size: 1vw; }
@@ -333,8 +334,10 @@
 	    		<span id="desc" class="current-description">Loading...</span>
 		  	</div>
 		  	<div class="grid-item item-6" id="news-feed">
-		   		<div id="loading-message" class="loading">Loading news...</div> 
-		  	</div>
+		  		<div id="news-rotator">
+    				Loading the latest headlines...
+				</div>
+		   </div>
 		  	<div class="grid-item item-7" id="site">
 		  		<img src="school site/site.png" alt="Pathways to Graduation Manhattan"/>
 		  	</div>
@@ -382,38 +385,35 @@
 		            document.getElementById('temp').innerText = `${Math.round(data.main.temp)}°`;document.getElementById('desc').innerText = data.weather[0].description;
 		            const iconCode = data.weather[0].icon;
 		            const iconContainer = document.getElementById('icon-container');
-		            const iconURL = `<img src="weather/${iconCode}.png" alt="weather">`; console.log(iconURL);
+		            const iconURL = `<img src="weather/${iconCode}.gif" alt="weather">`; console.log(iconURL);
 		            iconContainer.innerHTML = iconURL;
 		       	} catch (err) {document.getElementById('desc').innerText = "Check API Key"; console.error(err);}
 		    	} updateWeather();
 		// NEWS (5)
 			// 1. Configuration
-				const GUARDIAN_KEY = '729930d7-380b-4c17-881d-faedf5d2f5fe';
-				const API_URL = `https://content.guardianapis.com/search?section=world&show-fields=thumbnail,trailText&api-key=${GUARDIAN_KEY}&page-size=3`;
-				async function fetchGuardianNews() {const newsContainer = document.getElementById('news-feed');
-			// 2. Check Cache (Don't call API if we have fresh data)
-				    const cachedData = localStorage.getItem('guardian_news');
-				    const cacheTime = localStorage.getItem('guardian_cache_time');
-				    const isFresh = cacheTime && (Date.now() - cacheTime < 1800000); // 30 mins
-				    if (cachedData && isFresh) {console.log("Loading from cache...");renderNews(JSON.parse(cachedData));return;}
-			// 3. Fetch from API
-				    try { const response = await fetch(API_URL); const data = await response.json(); const articles = data.response.results;
-			// Save to Cache
-				        localStorage.setItem('guardian_news', JSON.stringify(articles));
-				        localStorage.setItem('guardian_cache_time', Date.now()); 
-				        renderNews(articles); } catch (error) {
-				        newsContainer.innerHTML = "<p>Could not load news at this time.</p>";
-				        console.error("Error fetching Guardian news:", error); }}
-				function renderNews(articles) { console.log(articles);
-				    const newsContainer = document.getElementById('news-feed');
-				    newsContainer.innerHTML = articles.map(art => `
-				        <div class="news-card" style="margin-bottom: 20px; border-bottom: 1px solid #ddd; padding-bottom: 10px;">
-				            <img src="${art.fields?.thumbnail || 'https://via.placeholder.com/150'}" style="width: 100px; float: left; margin-right: 15px;">
-				            <h3 style="margin: 0;"><a href="${art.webUrl}" target="_blank">${art.webTitle}</a></h3>
-				            <p style="font-size: 0.9em; color: #555;">${art.fields?.trailText || ''}</p><div style="clear: both;"></div>
+				const GUARDIAN_KEY = '729930d7-380b-4c17-881d-faedf5d2f5fe';const PROXY = 'https://corsproxy.io/?';
+				const API_URL = `${PROXY}https://content.guardianapis.com/search?section=world&show-fields=trailText&api-key=${GUARDIAN_KEY}`;let currentIndex = 0;
+				async function initRotator(){const cachedData=localStorage.getItem('guardian_news');const cacheTime=localStorage.getItem('guardian_cache_time');let articles;
+		    	    if(cachedData&&(Date.now()-cacheTime<1800000)){articles=JSON.parse(cachedData);}else{try {
+				            const response = await fetch(API_URL);const data = await response.json();articles = data.response.results;
+				            localStorage.setItem('guardian_news', JSON.stringify(articles));localStorage.setItem('guardian_cache_time', Date.now());} 
+				        catch (e) {console.error("Failed to fetch news", e);return;}}
+				    renderRotator(articles);startRotation();}
+				function renderRotator(articles){const container=document.getElementById('news-rotator');container.innerHTML=articles.map((art,index)=>`
+				        <div class="news-item ${index === 0 ? 'active' : ''}">
+				            <a href="${art.webUrl}" target="_blank">${art.webTitle}</a>
+				            <p>${art.fields?.trailText || ''}</p>
 				        </div>`).join(''); }
-			// Start
-				fetchGuardianNews();
+				function startRotation() {
+				    const items = document.querySelectorAll('.news-item');
+				    if (items.length === 0) return;
+				    setInterval(() => {
+				        items[currentIndex].classList.remove('active');
+				        currentIndex = (currentIndex + 1) % items.length;
+				        items[currentIndex].classList.add('active');
+				    }, 5000); // Changes every 5 seconds
+				}
+				initRotator();
 	 	// SEASON LOGO (6)
 		// QUOTE (7)
 		// DAY DATE TIME (8)

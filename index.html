@@ -26,18 +26,6 @@
 						<div class="current-description" id="current-description">Loading...</div> 
 					</div> 
 				</div> 
-				<div class="forecast"> 
-					<div class="forecast-item"> 
-						<div class="forecast-time" id="forecast-time-1">--:-- --</div> 
-						<img src="" alt="Icon" class="forecast-icon" id="forecast-icon-1"> 
-						<div class="forecast-temp" id="forecast-temp-1">--°</div> 
-					</div> 
-					<div class="forecast-item"> 
-						<div class="forecast-time" id="forecast-time-2">--:-- --</div> 
-						<img src="" alt="Icon" class="forecast-icon" id="forecast-icon-2"> 
-						<div class="forecast-temp" id="forecast-temp-2">--°</div> 
-					</div> 
-				</div> 
 			</div>
 	    <!-- NEXT DAY OFF -->
 		   	<div id="next-day-off"> <h3>NEXT DAY OFF APRIL 2nd</h3><p>SPRING RECESS 4/2-4/10</p></div>
@@ -85,27 +73,13 @@
 									console.log("SETERRORSTATE");}
 		
 			async function fetchWeather(){const apiUrl=`https://api.openweathermap.org/data/2.5/forecast?q=${city}&appid=${weatherApiKey}&units=imperial`;
-								try{const response=await fetch(apiUrl);if(!response.ok)throw new Error(`HTTP error! status: ${response.status}`);const data=await response.json();const current=data.list[0];const currentIconCode=current.weather[0].icon;const weatherMain=current.weather[0].main;document.getElementById('current-temp').textContent=`${Math.round(current.main.temp)}°`;
+								try{const response=await fetch(apiUrl);if(!response.ok)throw new Error(`HTTP error! status: ${response.status}`);const data=await response.json();
+									const current=data.list[0];
+									const currentIconCode=current.weather[0].icon;
+									const weatherMain=current.weather[0].main;document.getElementById('current-temp').textContent=`${Math.round(current.main.temp)}°`;
 									document.getElementById('current-description').textContent=current.weather[0].description;
 									document.getElementById('current-icon').src=`${iconBaseUrl}${mapOwmIconToSvg(currentIconCode)}.svg`;
-									const timezoneOffset=data.city.timezone;const getLocalHour=(dt)=>{
-										const localTimestamp=(dt+timezoneOffset)*1000;return new Date(localTimestamp).getUTCHours()};
-									const forecast1145=data.list.find(item=>getLocalHour(item.dt)===13);
-									const forecast250=data.list.find(item=>getLocalHour(item.dt)===16);document.getElementById('forecast-time-1').textContent='Lunch';
-									if(forecast1145){const forecast1IconCode=forecast1145.weather[0].icon;
-											document.getElementById('forecast-temp-1').textContent=`${Math.round(forecast1145.main.temp)}°`;
-											document.getElementById('forecast-icon-1').src=`${iconBaseUrl}${mapOwmIconToSvg(forecast1IconCode)}.svg`}
-									else{
-										document.getElementById('forecast-temp-1').textContent='--°'; console.log(forecast1145);
-										document.getElementById('forecast-icon-1').src=iconBaseUrl+defaultIcon;
-										console.warn('Could not find 1:00 PM (13:00) forecast.')}
-									document.getElementById('forecast-time-2').textContent='Dismissal';
-									if(forecast250){const forecast2IconCode=forecast250.weather[0].icon;
-													document.getElementById('forecast-temp-2').textContent=`${Math.round(forecast250.main.temp)}°`;
-													document.getElementById('forecast-icon-2').src=`${iconBaseUrl}${mapOwmIconToSvg(forecast2IconCode)}.svg`}
-									else{
-										document.getElementById('forecast-temp-2').textContent='--°';
-										document.getElementById('forecast-icon-2').src=iconBaseUrl+defaultIcon;console.warn('Could not find 4:00 PM (16:00) forecast.')}}
+									const timezoneOffset=data.city.timezone;const getLocalHour=(dt)=>{const localTimestamp=(dt+timezoneOffset)*1000;return new Date(localTimestamp).getUTCHours()};}
 								catch(error){setErrorState()}}
 					document.addEventListener('DOMContentLoaded',()=>{fetchWeather();
 										document.querySelectorAll('img').forEach(img=>{img.addEventListener('error',()=>{img.src=iconBaseUrl+defaultIcon})})});

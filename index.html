@@ -23,7 +23,6 @@
 					<div class="current-temp" id="current-temp">--°</div> 
 					<div class="current-conditions"> 
 						<img src="" alt="Weather icon" class="current-icon" id="current-icon"> 
-						<div class="current-description" id="current-description">Loading...</div> 
 					</div> 
 				</div> 
 			</div>
@@ -77,7 +76,8 @@
 									const current=data.list[0];
 									const currentIconCode=current.weather[0].icon;
 									const weatherMain=current.weather[0].main;document.getElementById('current-temp').textContent=`${Math.round(current.main.temp)}°`;
-									document.getElementById('current-icon').src=`${iconBaseUrl}${mapOwmIconToSvg(currentIconCode)}.svg`;
+									const weatherFinal=`${iconBaseUrl}${mapOwmIconToSvg(currentIconCode)}.svg`; console.log(weatherFinal);
+									document.getElementById('current-icon').src=weatherFinal;
 									const timezoneOffset=data.city.timezone;const getLocalHour=(dt)=>{const localTimestamp=(dt+timezoneOffset)*1000;return new Date(localTimestamp).getUTCHours()};}
 								catch(error){setErrorState()}}
 					document.addEventListener('DOMContentLoaded',()=>{fetchWeather();

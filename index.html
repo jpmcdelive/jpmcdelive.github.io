@@ -35,22 +35,9 @@
 	    <!-- NEWS -->
 	   	<div id="news-widget" style="display: none !important; ><div id="nytheaderlogo"><img src="content/NYT header logo.png"/></div><div id="carousel-content"><div id="loading-message" class="loading">Loading news...</div></div></div>
 
-	<div id="spotify-embed"></div>
-		
-	
+
 	
 	</body>
-	<script>
-window.onSpotifyIframeApiReady = (IFrameAPI) => {
-const element = document.getElementById('spotify-embed');
-const options = {
-width: '100%',
-height: '160', // initial height
-uri: 'spotify:playlist:6e0G7878Jru4yhYuZwSJBP?si=ZlHaiV9GRkmBwk4DT3O-2g'
-};
-IFrameAPI.createController(element, options, () => {});
-};
-</script>
 	<script>
 		// SCHEDULE (2)
 				function updateSchedule(){

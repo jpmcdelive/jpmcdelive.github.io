@@ -374,79 +374,183 @@
 		</div>
 	</body>
 	<script>
-		// MAIN (1)
-				const imageElement = document.querySelector('.item-1 img'); const images = ['1.png', '2.png', '3.png', '4.png', '5.png']; let currentIndexa = 0;
-				setInterval(() => { currentIndexa = (currentIndexa + 1) % images.length; imageElement.src = 'content/'+images[currentIndexa];}, 
-					10000 );
-		// SCHEDULE (2)
-				function updateSchedule(){
-					const now=new Date();const currentMinutes=(now.getHours()*60)+now.getMinutes();
-					let statusText="Free Time";const schedule=[
-			      {name:"bk.png",start:480,end:530}, //  08:00-08:50 bk
-			      {name:"p1.png",start:530,end:580}, //  08:50-09:40 p1
-			      {name:"p2.png",start:580,end:632}, //  09:40-10:32 p2
-			      {name:"p3.png",start:632,end:686}, //  10:32-11:24 p3
-			      {name:"lc.png",start:686,end:738}, //  11:26-12:18 lch
-			      {name:"p5.png",start:738,end:788}, //  12:18-01:08 p5
-			      {name:"p6.png",start:788,end:840}, //  01:08-02:00 p6
-			      {name:"p7.png",start:840,end:890}, //  02:00-02:50 prep
-			      {name:"cl.png",start:890,end:960}];//  02:50-04:00 gn
-				  const activePeriod=schedule.find(p=>currentMinutes>=p.start&&currentMinutes<p.end);
-				  if (activePeriod){statusText=activePeriod.name;}
-				  	else if(currentMinutes< 480){statusText="bk.png";}
-				  	else if(currentMinutes>=960){statusText="cl.png";}
-					var Image_Id=document.getElementById('schedule-period'); 
-					var newURL="schedule/"+statusText;Image_Id.src=newURL;
-					console.log("PERIOD: "+newURL);}
-				updateSchedule();setInterval(updateSchedule,60000);
-		// NEXT-DAY-OFF (3)
+	// MAIN (1)
+	const imageElement = document.querySelector('.item-1 img'); 
+	const images = ['1.png', '2.png', '3.png', '4.png', '5.png']; 
+	let currentIndexa = 0;
+	
+	setInterval(() => { 
+		currentIndexa = (currentIndexa + 1) % images.length; 
+		if(imageElement) imageElement.src = 'content/' + images[currentIndexa];
+	}, 10000);
 
-		// WEATHER (4)
-			    const apiKey='3705bab40a0bc21845733bbd24c752ba';const lat=40.7549;const lon=-73.9840;
-			    async function updateWeather() {try {
-		            const res = await fetch(`https://api.openweathermap.org/data/2.5/weather?lat=${lat}&lon=${lon}&units=imperial&appid=${apiKey}`);
-		            if (!res.ok) throw new Error('API Error');const data = await res.json();
-		            document.getElementById('temp').innerText = `${Math.round(data.main.temp)}°`;document.getElementById('desc').innerText = data.weather[0].description;
-		            const iconCode = data.weather[0].icon;
-		            const iconContainer = document.getElementById('icon-container');
-		            const iconURL = `<img src="weather/${iconCode}.gif" alt="weather">`; console.log(iconURL);
-		            iconContainer.innerHTML = iconURL;
-		       	} catch (err) {document.getElementById('desc').innerText = "Check API Key"; console.error(err);}
-		    	} updateWeather();
+	// SCHEDULE (2)
+	function updateSchedule(){
+		const now = new Date();
+		const currentMinutes = (now.getHours() * 60) + now.getMinutes();
+		let statusText = "Free Time";
 		
-		// NEWS
-			const NYT_API_KEY="fA2AACnKOZWVnU8C0kcCLkivelqlxDQc";
-			const NYT_SECTION="home";
-			const apiUrl=`https://api.nytimes.com/svc/topstories/v2/${NYT_SECTION}.json?api-key=${NYT_API_KEY}`;
-			const ARTICLE_COUNT=3;let articlesData=[];let currentIndex=0;
-			const carouselContent=document.getElementById('carousel-content');const loadingMessage=document.getElementById('loading-message');const navContainer=document.getElementById('carousel-nav');
-			function renderArticle(index){if(articlesData.length===0)return;
-				const article=articlesData[index];
-				let imageUrl="";let imageAlt="Article image";
-				if(article.multimedia&&article.multimedia.length>0){
-					const image=article.multimedia[2]||article.multimedia[0];
-					imageUrl=image.url;imageAlt=image.caption||article.title}
-				carouselContent.innerHTML=`
-					<div class="article-card">
-						<div class="article-content">${imageUrl?`
-							<img src="${imageUrl}" alt="${imageAlt}" class="article-image">`:''}
-							<h3>${article.title}</h3>
-							<p>${article.abstract}</p>
-						</div>
-					</div>`;				
-		async function fetchNews(){try{const response=await fetch(apiUrl);if(!response.ok){if(response.status===401||response.status===403){throw new Error("API Key error. Make sure your key is correct.")}throw new Error(`Network error: ${response.statusText}`)}const data=await response.json();articlesData=data.results.filter(a=>a.title&&a.url&&a.abstract).slice(0,ARTICLE_COUNT);if(articlesData.length===0){throw new Error("No valid articles found.")}loadingMessage.style.display='none';currentIndex=0;renderArticle(currentIndex)}catch(error){console.error("Failed to fetch news:",error);loadingMessage.textContent=`Failed to load news. ${error.message}`;loadingMessage.className='error'}}nextArticle=function(){currentIndex=(currentIndex+1)%articlesData.length;renderArticle(currentIndex)};setInterval(nextArticle,10000);document.addEventListener('DOMContentLoaded',fetchNews);
+		const schedule = [
+			{name: "bk.png", start: 480, end: 530},  // 08:00-08:50 bk
+			{name: "p1.png", start: 530, end: 580},  // 08:50-09:40 p1
+			{name: "p2.png", start: 580, end: 632},  // 09:40-10:32 p2
+			{name: "p3.png", start: 632, end: 686},  // 10:32-11:24 p3
+			{name: "lc.png", start: 686, end: 738},  // 11:26-12:18 lch
+			{name: "p5.png", start: 738, end: 788},  // 12:18-01:08 p5
+			{name: "p6.png", start: 788, end: 840},  // 01:08-02:00 p6
+			{name: "p7.png", start: 840, end: 890},  // 02:00-02:50 prep
+			{name: "cl.png", start: 890, end: 960}   // 02:50-04:00 gn
+		];
 
-		// SEASON LOGO (6)
-		// QUOTE (7)
-		// DAY DATE TIME (8)
-						var setDaydatetime=function(){const now=new Date();
-						const timeOptions={hour:'numeric',minute:'2-digit',hour12:true};
-						const formattedTime=new Intl.DateTimeFormat('en-US',timeOptions).format(now);
-						document.getElementById('time').textContent=formattedTime};const now=new Date();const dayOptions={weekday:'long'};
-						document.getElementById('day').textContent=new Intl.DateTimeFormat('en-US',dayOptions).format(now);
-						function getOrdinalDate(date){const day=date.getDate();const s=['th','st','nd','rd'];const v=day%100;return day+(s[(v-20)%10]||s[v]||s[0])}
-						const monthYearOptions={year:'numeric',month:'long'};const monthYear=new Intl.DateTimeFormat('en-US',monthYearOptions).format(now);
-						const fullDateText=monthYear.replace(/\d+/,getOrdinalDate(now));document.getElementById('date').textContent=fullDateText;setDaydatetime();
-						setInterval(function(){setDaydatetime()},10*1000);
-	</script>
+		const activePeriod = schedule.find(p => currentMinutes >= p.start && currentMinutes < p.end);
+		
+		if (activePeriod) {
+			statusText = activePeriod.name;
+		} else if (currentMinutes < 480) {
+			statusText = "bk.png";
+		} else if (currentMinutes >= 960) {
+			statusText = "cl.png";
+		}
+
+		var Image_Id = document.getElementById('schedule-period'); 
+		if(Image_Id) {
+			var newURL = "schedule/" + statusText;
+			Image_Id.src = newURL;
+			console.log("PERIOD: " + newURL);
+		}
+	}
+	updateSchedule();
+	setInterval(updateSchedule, 60000);
+
+	// NEXT-DAY-OFF (3)
+
+	// WEATHER (4)
+	const apiKey = '3705bab40a0bc21845733bbd24c752ba';
+	const lat = 40.7549;
+	const lon = -73.9840;
+
+	async function updateWeather() {
+		try {
+			const res = await fetch(`https://api.openweathermap.org/data/2.5/weather?lat=${lat}&lon=${lon}&units=imperial&appid=${apiKey}`);
+			if (!res.ok) throw new Error('API Error');
+			const data = await res.json();
+			
+			document.getElementById('temp').innerText = `${Math.round(data.main.temp)}°`;
+			document.getElementById('desc').innerText = data.weather[0].description;
+			
+			const iconCode = data.weather[0].icon;
+			const iconContainer = document.getElementById('icon-container');
+			const iconURL = `<img src="weather/${iconCode}.gif" alt="weather">`; 
+			console.log(iconURL);
+			if(iconContainer) iconContainer.innerHTML = iconURL;
+		} catch (err) {
+			const descEl = document.getElementById('desc');
+			if(descEl) descEl.innerText = "Check API Key"; 
+			console.error(err);
+		}
+	} 
+	updateWeather();
+	
+	// NEWS
+	const NYT_API_KEY = "fA2AACnKOZWVnU8C0kcCLkivelqlxDQc";
+	const NYT_SECTION = "home";
+	const apiUrl = `https://api.nytimes.com/svc/topstories/v2/${NYT_SECTION}.json?api-key=${NYT_API_KEY}`;
+	const ARTICLE_COUNT = 3;
+	let articlesData = [];
+	let currentIndex = 0;
+	
+	const carouselContent = document.getElementById('carousel-content');
+	const loadingMessage = document.getElementById('loading-message');
+	const navContainer = document.getElementById('carousel-nav');
+
+	function renderArticle(index){
+		if(articlesData.length === 0 || !carouselContent) return;
+		const article = articlesData[index];
+		let imageUrl = "";
+		let imageAlt = "Article image";
+		
+		if(article.multimedia && article.multimedia.length > 0){
+			const image = article.multimedia[2] || article.multimedia[0];
+			imageUrl = image.url;
+			imageAlt = image.caption || article.title;
+		}
+		
+		carouselContent.innerHTML = `
+			<div class="article-card">
+				<div class="article-content">${imageUrl ? `<img src="${imageUrl}" alt="${imageAlt}" class="article-image">` : ''}
+					<h3>${article.title}</h3>
+					<p>${article.abstract}</p>
+				</div>
+			</div>`;
+	}
+
+	async function fetchNews(){
+		try {
+			const response = await fetch(apiUrl);
+			if(!response.ok){
+				if(response.status === 401 || response.status === 403){
+					throw new Error("API Key error. Make sure your key is correct.");
+				}
+				throw new Error(`Network error: ${response.statusText}`);
+			}
+			const data = await response.json();
+			articlesData = data.results.filter(a => a.title && a.url && a.abstract).slice(0, ARTICLE_COUNT);
+			
+			if(articlesData.length === 0){
+				throw new Error("No valid articles found.");
+			}
+			
+			if(loadingMessage) loadingMessage.style.display = 'none';
+			currentIndex = 0;
+			renderArticle(currentIndex);
+		} catch(error) {
+			console.error("Failed to fetch news:", error);
+			if(loadingMessage) {
+				loadingMessage.textContent = `Failed to load news. ${error.message}`;
+				loadingMessage.className = 'error';
+			}
+		}
+	}
+
+	const nextArticle = function(){
+		currentIndex = (currentIndex + 1) % articlesData.length;
+		renderArticle(currentIndex);
+	};
+	
+	setInterval(nextArticle, 10000);
+	document.addEventListener('DOMContentLoaded', fetchNews);
+
+	// SEASON LOGO (6)
+	// QUOTE (7)
+	
+	// DAY DATE TIME (8)
+	var setDaydatetime = function(){
+		const now = new Date();
+		const timeOptions = {hour: 'numeric', minute: '2-digit', hour12: true};
+		const formattedTime = new Intl.DateTimeFormat('en-US', timeOptions).format(now);
+		const timeEl = document.getElementById('time');
+		if(timeEl) timeEl.textContent = formattedTime;
+	};
+
+	const clockNow = new Date();
+	const dayOptions = {weekday: 'long'};
+	const dayEl = document.getElementById('day');
+	if(dayEl) dayEl.textContent = new Intl.DateTimeFormat('en-US', dayOptions).format(clockNow);
+
+	function getOrdinalDate(date){
+		const day = date.getDate();
+		const s = ['th', 'st', 'nd', 'rd'];
+		const v = day % 100;
+		return day + (s[(v - 20) % 10] || s[v] || s[0]);
+	}
+
+	const monthYearOptions = {year: 'numeric', month: 'long'};
+	const monthYear = new Intl.DateTimeFormat('en-US', monthYearOptions).format(clockNow);
+	const fullDateText = monthYear.replace(/\d+/, getOrdinalDate(clockNow));
+	const dateEl = document.getElementById('date');
+	if(dateEl) dateEl.textContent = fullDateText;
+
+	setDaydatetime();
+	setInterval(setDaydatetime, 10000);
+</script>
 </html>
